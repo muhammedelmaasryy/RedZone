@@ -120,14 +120,6 @@ export function Hero({ ready }: { ready: boolean }) {
             ))}
           </h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={ready ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.6 }}
-            className="max-w-lg text-sm leading-relaxed text-ice-200/75 sm:text-base lg:text-lg"
-          >
-            {t.hero.sub}
-          </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -139,17 +131,6 @@ export function Hero({ ready }: { ready: boolean }) {
             <MagneticButton href={WHATSAPP} target="_blank" variant="ghost">{t.hero.cta2}</MagneticButton>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={ready ? { opacity: 1, scale: 1 } : {}}
-            transition={{ delay: 1, type: 'spring' }}
-            className="clip-angle-sm hidden items-center gap-2 border border-ice-300/40 bg-ice-300/10 px-3 py-2 text-sm text-ice-300 sm:flex"
-          >
-            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.2">
-              <rect x="4" y="10" width="16" height="10" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /><path d="m3 3 18 18" />
-            </svg>
-            {t.hero.badge}
-          </motion.div>
         </motion.div>
 
         {/* mascot */}
@@ -212,16 +193,6 @@ export function Hero({ ready }: { ready: boolean }) {
           </motion.div>
         </motion.div>
       </div>
-
-      <motion.div
-        style={{ opacity: fade }}
-        className="absolute bottom-6 left-1/2 z-10 hidden -translate-x-1/2 sm:flex flex-col items-center gap-2 text-xs tracking-[0.3em] text-white/50 uppercase"
-      >
-        {t.hero.scroll}
-        <div className="h-10 w-6 rounded-full border border-white/30 p-1">
-          <motion.div className="mx-auto h-2 w-1 rounded-full bg-red-500" animate={{ y: [0, 18, 0] }} transition={{ duration: 1.6, repeat: Infinity }} />
-        </div>
-      </motion.div>
     </section>
   )
 }
