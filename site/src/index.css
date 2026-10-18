@@ -110,8 +110,12 @@ html.lenis, html.lenis body { height: auto; }
   inset: 0;
   pointer-events: none;
 }
-.glitch::before { color: #ff1a1a; transform: translate(-2px, 0); mix-blend-mode: screen; animation: glitch-a 3.2s infinite steps(1); }
-.glitch::after { color: #a9bcf0; transform: translate(2px, 0); mix-blend-mode: screen; animation: glitch-b 3.2s infinite steps(1); }
+.glitch::before { color: #ff1a1a; transform: translate(-2px, 0); mix-blend-mode: screen; clip-path: inset(0 0 100% 0); }
+.glitch::after { color: #a9bcf0; transform: translate(2px, 0); mix-blend-mode: screen; clip-path: inset(0 0 100% 0); }
+.glitch[data-active]::before { animation: glitch-a 1.3s steps(1) 1.1s 1; }
+.glitch[data-active]::after { animation: glitch-b 1.3s steps(1) 1.1s 1; }
+.glitch:hover::before { animation: glitch-a 1.3s steps(1) infinite; }
+.glitch:hover::after { animation: glitch-b 1.3s steps(1) infinite; }
 @keyframes glitch-a {
   0%, 88%, 100% { clip-path: inset(0 0 100% 0); }
   89% { clip-path: inset(10% 0 60% 0); transform: translate(-6px, 1px); }

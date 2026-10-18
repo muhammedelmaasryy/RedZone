@@ -1,8 +1,9 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Float, Sparkles } from '@react-three/drei'
-import { Bloom, EffectComposer, ChromaticAberration, Vignette } from '@react-three/postprocessing'
+import { Bloom, EffectComposer, Vignette } from '@react-three/postprocessing'
 import { useMemo, useRef } from 'react'
 import * as THREE from 'three'
+import { markSceneReady } from '../../lib/sceneReady'
 
 type Kind = 'triangle' | 'circle' | 'cross' | 'square'
 
@@ -84,6 +85,16 @@ function HaloRing({ side }: { side: number }) {
   )
 }
 
+// Signals the preloader once a few frames have rendered (shaders compiled).
+function ReadySignal() {
+  const frames = useRef(0)
+  useFrame(() => {
+    frames.current += 1
+    if (frames.current === 3) markSceneReady()
+  })
+  return null
+}
+
 function Rig() {
   const { camera, pointer } = useThree()
   const target = useRef(new THREE.Vector3())
@@ -96,25 +107,26 @@ function Rig() {
   return null
 }
 
-export default function HeroScene({ lowPower = false, side = 1 }: { lowPower?: boolean; side?: number }) {
+export default function HeroScene({ lowPower = false, side = 1, active = true }: { lowPower?: boolean; side?: number; active?: boolean }) {
   return (
     <Canvas
-      dpr={lowPower ? [1, 1.25] : [1, 1.75]}
+      dpr={lowPower ? 1 : [1, 1.5]}
+      frameloop={active ? 'always' : 'never'}
       camera={{ position: [0, 0, 9], fov: 45 }}
-      gl={{ antialias: false, alpha: true, powerPreference: 'high-performance' }}
+      gl={{ antialias: false, alpha: true, powerPreference: 'high-performance', stencil: false }}
       style={{ position: 'absolute', inset: 0 }}
     >
       <ambientLight intensity={0.4} />
       <pointLight position={[4, 4, 6]} intensity={40} color="#ff4d4d" />
       <pointLight position={[-5, -3, 4]} intensity={25} color="#a9bcf0" />
-      <Shapes count={lowPower ? 10 : 18} side={side} />
+      <Shapes count={lowPower ? 9 : 16} side={side} />
       <HaloRing side={side} />
-      <Sparkles count={lowPower ? 40 : 90} scale={[16, 9, 6]} size={2.2} speed={0.35} color="#ff4d4d" opacity={0.7} />
+      <Sparkles count={lowPower ? 30 : 70} scale={[16, 9, 6]} size={2.2} speed={0.35} color="#ff4d4d" opacity={0.7} />
       <Rig />
+      <ReadySignal />
       {!lowPower && (
-        <EffectComposer multisampling={0}>
-          <Bloom intensity={0.85} luminanceThreshold={0.2} luminanceSmoothing={0.3} mipmapBlur />
-          <ChromaticAberration offset={new THREE.Vector2(0.0009, 0.0006)} radialModulation={false} modulationOffset={0} />
+        <EffectComposer multisampling={0} resolutionScale={0.5}>
+          <Bloom intensity={0.85} luminanceThreshold={0.2} luminanceSmoothing={0.3} mipmapBlur resolutionScale={0.5} />
           <Vignette eskil={false} offset={0.2} darkness={0.85} />
         </EffectComposer>
       )}

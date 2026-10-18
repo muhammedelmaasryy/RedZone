@@ -1,8 +1,9 @@
-import { motion, useMotionValue, useScroll, useSpring, useTransform } from 'motion/react'
+import { motion, useInView, useMotionValue, useScroll, useSpring, useTransform } from 'motion/react'
 import { lazy, Suspense, useEffect, useRef, useState, type PointerEvent } from 'react'
 import { WHATSAPP } from '../data/content'
 import { useI18n } from '../i18n'
 import { useMediaQuery, webglAvailable } from '../lib/hooks'
+import { markSceneReady } from '../lib/sceneReady'
 import { GlitchText } from '../components/fx/GlitchText'
 import { MagneticButton } from '../components/fx/MagneticButton'
 import { ScrambleText } from '../components/fx/ScrambleText'
@@ -21,7 +22,13 @@ export function Hero({ ready }: { ready: boolean }) {
   const [gl, setGl] = useState(false)
   const reduce = useMediaQuery('(prefers-reduced-motion: reduce)')
   const small = useMediaQuery('(max-width: 768px)')
-  useEffect(() => setGl(webglAvailable() && !reduce), [reduce])
+  useEffect(() => {
+    const ok = webglAvailable() && !reduce
+    setGl(ok)
+    if (!ok) markSceneReady()
+  }, [reduce])
+  // pause the WebGL loop when the hero is off screen
+  const inView = useInView(ref, { amount: 0.02 })
 
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
   const yText = useTransform(scrollYProgress, [0, 1], [0, 160])
@@ -58,8 +65,8 @@ export function Hero({ ready }: { ready: boolean }) {
       />
       {gl && (
         <Suspense fallback={null}>
-          <motion.div className="absolute inset-0" initial={{ opacity: 0 }} animate={{ opacity: ready ? (small ? 0.45 : 1) : 0 }} transition={{ duration: 1.5, delay: 0.4 }}>
-            <HeroScene lowPower={small} side={small ? 0 : dir === 'rtl' ? -1 : 1} />
+          <motion.div className="absolute inset-0" initial={{ opacity: 0 }} animate={{ opacity: ready ? (small ? 0.45 : 1) : 0 }} transition={{ duration: 1.2, delay: 0.9 }}>
+            <HeroScene lowPower={small} side={small ? 0 : dir === 'rtl' ? -1 : 1} active={inView} />
           </motion.div>
         </Suspense>
       )}
@@ -105,7 +112,7 @@ export function Hero({ ready }: { ready: boolean }) {
                   animate={anim}
                   className={`block ${i === 0 ? 'text-5xl text-red-600 text-glow sm:text-8xl lg:text-[8.5rem]' : 'text-[1.9rem] sm:text-6xl lg:text-7xl'} ${i === 2 ? 'text-outline-ice' : ''}`}
                 >
-                  {i === 0 ? <GlitchText text={w} /> : w}
+                  {i === 0 ? <GlitchText text={w} active={ready} /> : w}
                 </motion.span>
               </span>
             ))}
@@ -145,16 +152,15 @@ export function Hero({ ready }: { ready: boolean }) {
 
         {/* mascot */}
         <motion.div style={{ y: yMascot }} className="relative order-first mx-auto w-full max-w-[250px] sm:max-w-[340px] lg:order-none lg:max-w-[460px]">
+          <div aria-hidden className="pointer-events-none absolute inset-0 rounded-full bg-[radial-gradient(circle,rgba(229,0,0,0.38)_0%,rgba(169,188,240,0.14)_40%,transparent_68%)]" />
           <motion.div
             initial={{ opacity: 0, scale: 0.6, rotate: -8 }}
             animate={ready ? { opacity: 1, scale: 1, rotate: 0 } : {}}
             transition={{ delay: 0.3, duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
             style={{ rotateX: rotX, rotateY: rotY, x: tx, y: ty, transformPerspective: 900 }}
-            className="relative"
+            className="relative will-change-transform"
           >
-            <div className="absolute inset-[8%] rounded-full bg-red-600/35 blur-[70px]" />
-            <div className="absolute inset-[22%] translate-y-[10%] rounded-full bg-ice-400/25 blur-[60px]" />
-            <svg viewBox="0 0 400 440" className="relative w-full drop-shadow-[0_0_36px_rgba(169,188,240,0.35)]">
+            <svg viewBox="0 0 400 440" className="relative w-full">
               <defs>
                 <clipPath id="shield">
                   <path d="M200 10 L380 70 V230 C380 330 300 400 200 430 C100 400 20 330 20 230 V70 Z" />

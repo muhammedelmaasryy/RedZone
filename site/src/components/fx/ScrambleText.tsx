@@ -13,7 +13,10 @@ export function ScrambleText({ text, className = '', duration = 900 }: { text: s
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     let raf = 0
     const start = performance.now()
+    let last = 0
     const tick = (t: number) => {
+      if (t - last < 40 && t - start < duration) { raf = requestAnimationFrame(tick); return }
+      last = t
       const p = Math.min(1, (t - start) / duration)
       const reveal = Math.floor(p * text.length)
       setOut(
