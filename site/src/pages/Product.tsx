@@ -62,8 +62,9 @@ export default function Product() {
   return (
     <div className="relative pt-24 pb-24">
       <div className="absolute inset-x-0 top-0 h-[700px] overflow-hidden">
-        <div className="absolute inset-0 opacity-50 blur-3xl" style={{ background: `radial-gradient(circle at 30% 30%, ${game.cover.from}, transparent 60%)` }} />
-        <div className="stripes-bg absolute inset-0 opacity-30 [mask-image:linear-gradient(black,transparent)]" />
+        <img src={`/games/${game.id}/hero.webp`} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover opacity-40 [mask-image:linear-gradient(black_20%,transparent)]" onError={(e) => { e.currentTarget.style.display = 'none' }} />
+        <div className="absolute inset-0 bg-gradient-to-b from-void/40 via-void/70 to-void" />
+        <div className="stripes-bg absolute inset-0 opacity-20 [mask-image:linear-gradient(black,transparent)]" />
       </div>
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
@@ -81,7 +82,7 @@ export default function Product() {
               style={{ rotate: coverRot }}
               className="mx-auto max-w-[420px]"
             >
-              <GameCover game={game} big className="clip-angle aspect-[4/5] w-full shadow-[0_40px_100px_rgba(0,0,0,0.7)]" />
+              <GameCover game={game} big priority className="clip-angle aspect-[2/3] w-full shadow-[0_40px_100px_rgba(0,0,0,0.7)]" />
             </motion.div>
             <Crosses className="mx-auto mt-6 w-fit text-red-600/70" count={6} />
           </motion.div>

@@ -60,7 +60,7 @@ export function DealOfDay() {
         >
           <div className="stripes-bg absolute inset-0 opacity-40" />
           <div className="relative p-6 sm:p-10">
-            <GameCover game={game} big className="mx-auto aspect-[4/5] w-full max-w-[320px] -rotate-3 shadow-[0_30px_60px_rgba(0,0,0,0.6)] transition-transform duration-500 hover:rotate-0" />
+            <GameCover game={game} big className="mx-auto aspect-[2/3] w-full max-w-[260px] -rotate-3 shadow-[0_30px_60px_rgba(0,0,0,0.6)] transition-transform duration-500 hover:rotate-0" />
           </div>
           <div className="relative flex flex-col justify-center gap-5 p-6 sm:p-10">
             <div className="flex items-center gap-3">

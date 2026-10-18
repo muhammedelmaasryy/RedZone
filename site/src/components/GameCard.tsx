@@ -18,11 +18,11 @@ export function GameCard({ game, className = '' }: { game: Game; className?: str
         draggable={false}
         className="group clip-angle relative flex h-full flex-col overflow-hidden border border-white/10 bg-night/80 transition-colors duration-300 hover:border-ice-300/70"
       >
-        <div className="relative aspect-[3/4] overflow-hidden sm:aspect-[4/5]">
+        <div className="relative aspect-[2/3] overflow-hidden">
           <motion.div className="h-full w-full" whileHover={{ scale: 1.07 }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}>
             <GameCover game={game} className="h-full w-full" />
           </motion.div>
-          <div className="absolute start-2 top-2 flex flex-col items-start gap-1 sm:start-3 sm:top-3 sm:gap-1.5">
+          <div className="absolute top-2 right-2 flex flex-col items-end gap-1 sm:top-2.5 sm:right-2.5 sm:gap-1.5">
             {game.discount && (
               <span className="clip-angle-sm bg-red-600 px-1.5 py-0.5 font-display text-[10px] text-white sm:px-2 sm:py-1 sm:text-xs">-{num(game.discount)}%</span>
             )}
