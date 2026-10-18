@@ -40,7 +40,7 @@ export function MagneticButton({ children, className = '', strength = 0.35, onCl
     <motion.span
       style={{ x, y }}
       whileTap={disabled ? undefined : { scale: 0.94 }}
-      className={`clip-angle relative inline-flex w-full items-center justify-center gap-2 overflow-hidden px-7 py-3.5 font-display text-sm tracking-wide uppercase transition-colors duration-200 ${styles[variant]} ${disabled ? 'pointer-events-none opacity-40' : ''} ${className}`}
+      className={`clip-angle relative inline-flex w-full items-center justify-center gap-2 overflow-hidden px-5 py-3 font-display text-xs sm:px-7 sm:py-3.5 sm:text-sm tracking-wide uppercase transition-colors duration-200 ${styles[variant]} ${disabled ? 'pointer-events-none opacity-40' : ''} ${className}`}
     >
       <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
       <span className="relative z-10 flex items-center gap-2">{children}</span>

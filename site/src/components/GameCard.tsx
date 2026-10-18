@@ -17,17 +17,17 @@ export function GameCard({ game, className = '' }: { game: Game; className?: str
         draggable={false}
         className="group clip-angle relative flex h-full flex-col overflow-hidden border border-white/10 bg-night/80 transition-colors duration-300 hover:border-red-500/70"
       >
-        <div className="relative aspect-[4/5] overflow-hidden">
+        <div className="relative aspect-[3/4] overflow-hidden sm:aspect-[4/5]">
           <motion.div className="h-full w-full" whileHover={{ scale: 1.07 }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}>
             <GameCover game={game} className="h-full w-full" />
           </motion.div>
-          <div className="absolute start-3 top-3 flex flex-col items-start gap-1.5">
+          <div className="absolute start-2 top-2 flex flex-col items-start gap-1 sm:start-3 sm:top-3 sm:gap-1.5">
             {game.discount && (
-              <span className="clip-angle-sm bg-red-600 px-2 py-1 font-display text-xs text-white">-{num(game.discount)}%</span>
+              <span className="clip-angle-sm bg-red-600 px-1.5 py-0.5 font-display text-[10px] text-white sm:px-2 sm:py-1 sm:text-xs">-{num(game.discount)}%</span>
             )}
             {game.badge && (
               <span
-                className={`px-2 py-1 font-condensed text-sm leading-none tracking-wider uppercase ${
+                className={`px-1.5 py-1 font-condensed text-xs leading-none tracking-wider uppercase sm:px-2 sm:text-sm ${
                   game.badge === 'preorder' ? 'bg-ice-300 text-void' : game.badge === 'hot' ? 'bg-white text-red-700' : 'bg-void/80 text-ice-300 ring-1 ring-ice-300/50'
                 }`}
               >
@@ -41,21 +41,21 @@ export function GameCard({ game, className = '' }: { game: Game; className?: str
             </span>
           </div>
         </div>
-        <div className="flex flex-1 flex-col gap-2 p-4">
-          <div className="text-xs text-ice-300/60">{l(genreLabel[game.genre])}</div>
-          <h3 className="line-clamp-1 font-body text-base font-bold text-white" dir="ltr" style={{ textAlign: 'start' }}>
+        <div className="flex flex-1 flex-col gap-1 p-2.5 sm:gap-2 sm:p-4">
+          <div className="text-[10px] text-ice-300/60 sm:text-xs">{l(genreLabel[game.genre])}</div>
+          <h3 className="line-clamp-1 font-body text-xs font-bold text-white sm:text-base" dir="ltr" style={{ textAlign: 'start' }}>
             {game.title}
           </h3>
           <div className="mt-auto flex items-end justify-between gap-2">
             <div>
-              <div className="text-[11px] text-ice-200/50">{t.card.from}</div>
-              <div className="font-display text-lg text-red-500">{egp(price)}</div>
+              <div className="text-[9px] text-ice-200/50 sm:text-[11px]">{t.card.from}</div>
+              <div className="font-display text-sm text-red-500 sm:text-lg">{egp(price)}</div>
             </div>
             <div className="text-end">
-              <div className="text-[11px] text-ice-200/50">
+              <div className="text-[9px] text-ice-200/50 sm:text-[11px]">
                 {num(game.slotsLeft)} {t.card.slotsLeft}
               </div>
-              <div className="mt-1 h-1 w-16 overflow-hidden bg-white/10">
+              <div className="mt-1 ms-auto h-1 w-10 overflow-hidden bg-white/10 sm:w-16">
                 <motion.div
                   className={`h-full ${game.slotsLeft <= 3 ? 'bg-red-500' : 'bg-ice-400'}`}
                   initial={{ width: 0 }}

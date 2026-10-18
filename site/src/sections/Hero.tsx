@@ -44,7 +44,7 @@ export function Hero({ ready }: { ready: boolean }) {
   const anim = ready ? 'show' : 'hidden'
 
   return (
-    <section ref={ref} onPointerMove={onMove} className="noise relative flex min-h-[100svh] items-center overflow-hidden pt-20">
+    <section ref={ref} onPointerMove={onMove} className="noise relative flex items-center overflow-hidden pt-20 sm:min-h-[100svh]">
       {/* backdrop layers */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_40%,#3a0000_0%,#110101_45%,#050001_80%)]" />
       <div className="grid-bg absolute inset-0 opacity-60 [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)]" />
@@ -82,9 +82,9 @@ export function Hero({ ready }: { ready: boolean }) {
       <Chevrons className="absolute top-28 start-6 hidden text-red-600 md:flex" count={5} />
       <Crosses className="absolute bottom-24 end-8 hidden text-ice-300/70 md:flex" count={5} />
 
-      <div className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-10 px-4 pb-24 sm:px-6 lg:grid-cols-[1.15fr_1fr]">
+      <div className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-4 px-4 pt-4 pb-20 sm:gap-10 sm:px-6 sm:pt-0 sm:pb-24 lg:grid-cols-[1.15fr_1fr]">
         {/* copy */}
-        <motion.div style={{ y: yText, opacity: fade }} className="flex flex-col items-start gap-6">
+        <motion.div style={{ y: yText, opacity: fade }} className="flex flex-col items-start gap-4 sm:gap-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={ready ? { opacity: 1, y: 0 } : {}}
@@ -97,7 +97,7 @@ export function Hero({ ready }: { ready: boolean }) {
               </span>
               {t.hero.online}
             </span>
-            <span className="font-condensed text-lg tracking-[0.25em] text-ice-300 uppercase" dir="ltr">
+            <span className="font-condensed text-base tracking-[0.25em] text-ice-300 uppercase sm:text-lg" dir="ltr">
               <ScrambleText text={t.hero.kicker} />
             </span>
           </motion.div>
@@ -110,7 +110,7 @@ export function Hero({ ready }: { ready: boolean }) {
                   variants={line}
                   initial="hidden"
                   animate={anim}
-                  className={`block ${i === 0 ? 'text-6xl text-red-600 text-glow sm:text-8xl lg:text-[8.5rem]' : 'text-4xl sm:text-6xl lg:text-7xl'} ${i === 2 ? 'text-outline' : ''}`}
+                  className={`block ${i === 0 ? 'text-5xl text-red-600 text-glow sm:text-8xl lg:text-[8.5rem]' : 'text-[1.9rem] sm:text-6xl lg:text-7xl'} ${i === 2 ? 'text-outline' : ''}`}
                 >
                   {i === 0 ? <GlitchText text={w} /> : w}
                 </motion.span>
@@ -122,7 +122,7 @@ export function Hero({ ready }: { ready: boolean }) {
             initial={{ opacity: 0, y: 20 }}
             animate={ready ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.6 }}
-            className="max-w-lg text-base leading-relaxed text-ice-200/75 sm:text-lg"
+            className="max-w-lg text-sm leading-relaxed text-ice-200/75 sm:text-base lg:text-lg"
           >
             {t.hero.sub}
           </motion.p>
@@ -151,7 +151,7 @@ export function Hero({ ready }: { ready: boolean }) {
         </motion.div>
 
         {/* mascot */}
-        <motion.div style={{ y: yMascot }} className="relative mx-auto w-full max-w-[460px]">
+        <motion.div style={{ y: yMascot }} className="relative order-first mx-auto w-full max-w-[170px] sm:max-w-[340px] lg:order-none lg:max-w-[460px]">
           <motion.div
             initial={{ opacity: 0, scale: 0.6, rotate: -8 }}
             animate={ready ? { opacity: 1, scale: 1, rotate: 0 } : {}}
@@ -199,7 +199,7 @@ export function Hero({ ready }: { ready: boolean }) {
             initial={{ opacity: 0, y: 30 }}
             animate={ready ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 1.1 }}
-            className="relative -mt-6 text-center"
+            className="relative -mt-6 hidden text-center sm:block"
             dir="ltr"
           >
             <div className="font-display text-5xl leading-none sm:text-6xl">
@@ -213,7 +213,7 @@ export function Hero({ ready }: { ready: boolean }) {
 
       <motion.div
         style={{ opacity: fade }}
-        className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 text-xs tracking-[0.3em] text-white/50 uppercase"
+        className="absolute bottom-6 left-1/2 z-10 hidden -translate-x-1/2 sm:flex flex-col items-center gap-2 text-xs tracking-[0.3em] text-white/50 uppercase"
       >
         {t.hero.scroll}
         <div className="h-10 w-6 rounded-full border border-white/30 p-1">

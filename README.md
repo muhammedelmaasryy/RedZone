@@ -22,16 +22,13 @@ npm run dev
 - `/checkout`: mock payment (Vodafone Cash, InstaPay, Fawry, card)
 - `/order/:id`: simulated QR login delivery tracker
 
-## Deploy (GitHub Actions to Vercel)
+## Deploy (Vercel Git integration)
 
-1. Run `npx vercel login`, then run `npx vercel link` inside `site/`. Linking creates `site/.vercel/project.json`.
-2. Add these GitHub repo secrets:
-   - `VERCEL_TOKEN`: create one at vercel.com/account/tokens
-   - `VERCEL_ORG_ID`: the `orgId` value from `project.json`
-   - `VERCEL_PROJECT_ID`: the `projectId` value from `project.json`
-3. Every PR then gets a preview URL as a comment, and every push to `main` deploys to production.
+1. On vercel.com, choose **Add New → Project** and import the GitHub repo.
+2. Set **Root Directory** to `site`. Vercel detects Vite, so the build command is `npm run build` and the output folder is `dist`.
+3. Click **Deploy**. After that, every push to `main` redeploys production, and every other branch or PR gets a preview URL.
 
-In the Vercel project settings, set the Git integration so it does not auto-deploy. Otherwise every change deploys twice, once from Vercel and once from Actions.
+GitHub Actions (`.github/workflows/ci.yml`) runs lint, typecheck and build on each push and PR.
 
 ## Brand palette (extracted from logo + banner)
 

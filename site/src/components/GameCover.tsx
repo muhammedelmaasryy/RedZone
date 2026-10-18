@@ -22,7 +22,7 @@ export function GameCover({ game, className = '', big = false }: { game: Game; c
       </motion.div>
       <PSShape shape={shape} weight={3} className="absolute bottom-[38%] left-[10%] w-[18%] text-white/40" />
       <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-      <div className="absolute inset-x-0 bottom-0 p-4">
+      <div className="absolute inset-x-0 bottom-0 p-2.5 sm:p-4">
         <div className="mb-1 flex gap-1">
           {game.platforms.map((p) => (
             <span key={p} className="bg-white/90 px-1.5 py-0.5 font-display text-[10px] leading-none text-black">
@@ -30,7 +30,7 @@ export function GameCover({ game, className = '', big = false }: { game: Game; c
             </span>
           ))}
         </div>
-        <div className={`font-display leading-[0.95] text-white uppercase ${big ? 'text-4xl sm:text-5xl' : 'text-xl'}`} style={{ textShadow: `0 0 24px ${accent}66` }}>
+        <div className={`font-display leading-[0.95] text-white uppercase ${big ? 'text-3xl sm:text-5xl' : 'text-base sm:text-xl'}`} style={{ textShadow: `0 0 24px ${accent}66` }}>
           {game.short}
         </div>
       </div>
