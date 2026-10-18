@@ -9,6 +9,7 @@ import { useStore } from '../store'
 import { FakeQR } from '../components/FakeQR'
 import { GameCover } from '../components/GameCover'
 import { MagneticButton } from '../components/fx/MagneticButton'
+import { Icon } from '../components/Icon'
 
 // Simulated live delivery: reserved → waiting QR → approving → delivered.
 type Stage = 1 | 2 | 3 | 4
@@ -106,7 +107,7 @@ export default function Order() {
                   <motion.div className="absolute inset-y-0 start-0 bg-red-500" initial={{ width: 0 }} animate={{ width: done ? '100%' : active ? '50%' : '0%' }} transition={{ duration: 0.6 }} />
                 </div>
                 <div className={`text-[10px] sm:text-xs ${done ? 'text-white' : active ? 'text-red-400' : 'text-white/30'}`}>
-                  {done ? '✓ ' : ''}{s}
+                  <span className="inline-flex items-center gap-1">{done && <Icon name="check" className="h-3 w-3" strokeWidth={3} />}{s}</span>
                 </div>
               </div>
             )
@@ -119,7 +120,7 @@ export default function Order() {
               <motion.div key="s1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -20 }} className="flex min-h-[380px] flex-col items-center justify-center gap-6 text-center">
                 <div className="relative h-24 w-24">
                   <motion.span className="absolute inset-0 border-4 border-red-500" animate={{ rotate: 360 }} transition={{ duration: 1.6, repeat: Infinity, ease: 'linear' }} style={{ borderRadius: '30%' }} />
-                  <span className="absolute inset-4 flex items-center justify-center rounded-full bg-red-600 text-2xl">🎮</span>
+                  <span className="absolute inset-4 flex items-center justify-center rounded-full bg-red-600"><Icon name="gamepad" className="h-8 w-8" /></span>
                 </div>
                 <div className="font-display text-2xl">{t.order.steps[1]}…</div>
               </motion.div>
@@ -142,7 +143,7 @@ export default function Order() {
                   </div>
                   <div className="flex flex-col gap-2 sm:flex-row">
                     <MagneticButton onClick={scanned} strength={0.15}>{t.order.simulate}</MagneticButton>
-                    {cam !== 'on' && <MagneticButton onClick={openCam} variant="ghost" strength={0.15}>📷 {t.order.openCam}</MagneticButton>}
+                    {cam !== 'on' && <MagneticButton onClick={openCam} variant="ghost" strength={0.15}><Icon name="camera" /> {t.order.openCam}</MagneticButton>}
                   </div>
                   {cam === 'denied' && <p className="text-sm text-red-400">{t.order.camDenied}</p>}
                   <div className="mt-2">
@@ -181,7 +182,7 @@ export default function Order() {
                 </div>
                 <div className="font-display text-xl sm:text-2xl">{t.order.approving}</div>
                 <div className="flex items-center gap-2 text-sm text-white/50">
-                  <span className="h-2 w-2 animate-pulse rounded-full bg-green-500" /> {operator} · Red Zone
+                  {operator} · Red Zone
                 </div>
                 <div className="h-1.5 w-64 overflow-hidden bg-white/10">
                   <motion.div className="h-full bg-gradient-to-r from-red-700 to-red-500" initial={{ width: '0%' }} animate={{ width: '100%' }} transition={{ duration: 3.6, ease: 'easeInOut' }} />
@@ -191,8 +192,8 @@ export default function Order() {
 
             {stage === 4 && (
               <motion.div key="s4" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="flex min-h-[380px] flex-col items-center justify-center gap-6 text-center">
-                <motion.div initial={{ scale: 0, rotate: -180 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', stiffness: 200, damping: 12 }} className="flex h-24 w-24 items-center justify-center rounded-full bg-green-500 text-5xl shadow-[0_0_60px_rgba(34,197,94,0.6)]">
-                  ✓
+                <motion.div initial={{ scale: 0, rotate: -180 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', stiffness: 200, damping: 12 }} className="flex h-24 w-24 items-center justify-center rounded-full bg-green-500 shadow-[0_0_60px_rgba(34,197,94,0.6)]">
+                  <Icon name="check" className="h-12 w-12" strokeWidth={3} />
                 </motion.div>
                 <h2 className="font-display text-3xl sm:text-4xl">{t.order.done}</h2>
                 <p className="text-sm text-white/50">{t.order.operator} {operator}</p>
@@ -203,12 +204,12 @@ export default function Order() {
                     </motion.div>
                   ) : (
                     <motion.p key="ok" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="max-w-md border border-green-500/40 bg-green-500/10 px-5 py-3 text-green-300">
-                      🛡️ {t.order.confirmed}
+                      <span className="inline-flex items-center gap-2"><Icon name="shield" className="h-5 w-5 shrink-0" />{t.order.confirmed}</span>
                     </motion.p>
                   )}
                 </AnimatePresence>
                 <div className="flex gap-4 text-sm">
-                  <button onClick={restart} className="text-white/50 hover:text-white">↻ {t.order.restart}</button>
+                  <button onClick={restart} className="inline-flex items-center gap-1.5 text-white/50 hover:text-white"><Icon name="refresh" className="h-3.5 w-3.5" />{t.order.restart}</button>
                   <Link to="/games" className="text-red-400 hover:text-red-300">{t.order.shop}</Link>
                 </div>
               </motion.div>

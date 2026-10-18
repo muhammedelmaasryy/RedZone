@@ -10,6 +10,7 @@ import { GameCard } from '../components/GameCard'
 import { MagneticButton } from '../components/fx/MagneticButton'
 import { AnimatedPrice } from '../components/fx/CountUp'
 import { Crosses } from '../components/fx/Shapes'
+import { Icon } from '../components/Icon'
 
 type Fly = { from: DOMRect; to: DOMRect } | null
 
@@ -89,7 +90,7 @@ export default function Product() {
             <div>
               <div className="mb-2 flex flex-wrap items-center gap-2 text-sm">
                 <span className="bg-white/10 px-2 py-1 text-ice-300">{l(genreLabel[game.genre])}</span>
-                <span className="text-yellow-400">★ {num(game.rating)}</span>
+                <span className="flex items-center gap-1 text-ice-300"><Icon name="star" className="h-3.5 w-3.5" /> {num(game.rating)}</span>
                 {game.discount && <span className="bg-red-600 px-2 py-1 font-display text-xs">-{num(game.discount)}%</span>}
               </div>
               <h1 className="font-display text-4xl leading-tight sm:text-5xl" dir="ltr" style={{ textAlign: 'start' }}>{game.title}</h1>
@@ -98,7 +99,6 @@ export default function Product() {
 
             {game.releaseDate && cd.diff > 0 && (
               <div className="clip-angle-sm flex items-center gap-3 border border-ice-300/40 bg-ice-300/10 px-4 py-3 text-sm text-ice-300">
-                <span className="relative flex h-2.5 w-2.5"><span className="absolute h-full w-full animate-ping rounded-full bg-ice-300" /><span className="relative h-2.5 w-2.5 rounded-full bg-ice-300" /></span>
                 {t.product.preorderIn} <b className="font-display text-white">{num(cd.d)}</b> {t.product.days} · <span dir="ltr" className="font-mono">{String(cd.h).padStart(2, '0')}:{String(cd.m).padStart(2, '0')}:{String(cd.s).padStart(2, '0')}</span>
               </div>
             )}
@@ -153,16 +153,16 @@ export default function Product() {
             <label className="flex cursor-pointer items-center gap-3 border border-white/10 p-4 hover:border-white/30">
               <input type="checkbox" checked={addPlus} onChange={(e) => setAddPlus(e.target.checked)} className="peer sr-only" />
               <span className="flex h-6 w-6 items-center justify-center border-2 border-white/30 peer-checked:border-red-500 peer-checked:bg-red-600">
-                {addPlus && <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }}>✓</motion.span>}
+                {addPlus && <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }}><Icon name="check" className="h-4 w-4" strokeWidth={3} /></motion.span>}
               </span>
               <span className="flex-1 text-sm">{t.product.addPlus}</span>
               <span className="font-display text-sm text-white/70">+{egp(PLUS_ADDON_PRICE)}</span>
             </label>
 
             <ul className="flex flex-col gap-2 text-sm text-white/60">
-              <li className="flex items-center gap-2">🛡️ {t.product.warranty}</li>
-              <li className="flex items-center gap-2">⚡ {t.product.delivery}</li>
-              <li className="flex items-center gap-2">📦 {num(game.slotsLeft)} {t.card.slotsLeft}</li>
+              <li className="flex items-center gap-2"><Icon name="shield" className="h-4 w-4 text-ice-300" /> {t.product.warranty}</li>
+              <li className="flex items-center gap-2"><Icon name="bolt" className="h-4 w-4 text-ice-300" /> {t.product.delivery}</li>
+              <li className="flex items-center gap-2"><Icon name="box" className="h-4 w-4 text-ice-300" /> {num(game.slotsLeft)} {t.card.slotsLeft}</li>
             </ul>
 
             <div className="flex flex-col gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">

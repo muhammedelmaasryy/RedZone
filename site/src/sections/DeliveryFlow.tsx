@@ -5,6 +5,7 @@ import { FakeQR } from '../components/FakeQR'
 import { PSShape } from '../components/fx/Shapes'
 import { games } from '../data/games'
 import { GameCover } from '../components/GameCover'
+import { Icon } from '../components/Icon'
 
 // Pinned scroll story: pay → scan console QR → Red Zone approves → play.
 export function DeliveryFlow() {
@@ -23,8 +24,8 @@ export function DeliveryFlow() {
         <div className="relative mx-auto grid w-full max-w-7xl items-center gap-8 px-4 pt-16 sm:px-6 lg:grid-cols-[0.9fr_1.1fr]">
           {/* steps */}
           <div>
-            <div className="mb-3 flex items-center gap-3 text-red-500">
-              <span className="h-px w-10 bg-red-500" />
+            <div className="mb-3 flex items-center gap-3 text-ice-300">
+              <span className="h-px w-10 bg-gradient-to-r from-red-500 to-ice-300 rtl:bg-gradient-to-l" />
               <span className="font-condensed text-xl tracking-[0.2em] uppercase">{t.how.kicker}</span>
             </div>
             <h2 className="mb-6 font-display text-3xl leading-tight sm:text-5xl">{t.how.title}</h2>
@@ -40,7 +41,7 @@ export function DeliveryFlow() {
                     className="flex gap-4"
                   >
                     <span className={`flex h-10 w-10 shrink-0 items-center justify-center border-2 font-display ${step >= i ? 'border-red-500 bg-red-600 text-white' : 'border-white/20 text-white/40'}`}>
-                      {step > i ? '✓' : num(i + 1)}
+                      {step > i ? <Icon name="check" className="h-4 w-4" strokeWidth={3} /> : num(i + 1)}
                     </span>
                     <div>
                       <div className="flex flex-wrap items-center gap-2">
@@ -100,7 +101,7 @@ export function DeliveryFlow() {
                   {step === 3 && (
                     <motion.div key="lib" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-gradient-to-br from-[#2a0000] to-[#050001] p-3">
                       <motion.div initial={{ y: -10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mb-2 flex items-center gap-2 text-[10px] text-white sm:text-xs">
-                        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-green-500 text-[10px]">✓</span>
+                        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-green-500 text-[10px]"><Icon name="check" className="h-3 w-3" strokeWidth={3} /></span>
                         Signed in · Welcome back
                       </motion.div>
                       <div className="grid grid-cols-4 gap-1.5">
@@ -155,7 +156,7 @@ export function DeliveryFlow() {
                         transition={{ delay: 0.6, type: 'spring' }}
                         className="mt-auto flex flex-col items-center gap-1 rounded bg-green-500/15 p-2 text-green-300"
                       >
-                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500 text-white">✓</span>
+                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500 text-white"><Icon name="check" className="h-3.5 w-3.5" strokeWidth={3} /></span>
                         PAID
                       </motion.div>
                     </motion.div>
@@ -187,7 +188,7 @@ export function DeliveryFlow() {
                   )}
                   {step === 3 && (
                     <motion.div key="ok" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="flex h-full flex-col items-center justify-center gap-2 p-2 text-center text-[9px]">
-                      <motion.span initial={{ rotate: -180, scale: 0 }} animate={{ rotate: 0, scale: 1 }} transition={{ type: 'spring' }} className="flex h-12 w-12 items-center justify-center rounded-full bg-green-500 text-xl text-white">✓</motion.span>
+                      <motion.span initial={{ rotate: -180, scale: 0 }} animate={{ rotate: 0, scale: 1 }} transition={{ type: 'spring' }} className="flex h-12 w-12 items-center justify-center rounded-full bg-green-500 text-white"><Icon name="check" className="h-6 w-6" strokeWidth={3} /></motion.span>
                       <div className="font-bold text-white">Delivered</div>
                       <div className="rounded bg-red-600 px-2 py-1 text-white">I'm signed in</div>
                     </motion.div>

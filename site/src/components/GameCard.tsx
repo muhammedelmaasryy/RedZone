@@ -4,6 +4,7 @@ import { genreLabel, minPrice, type Game } from '../data/games'
 import { useI18n } from '../i18n'
 import { GameCover } from './GameCover'
 import { TiltCard } from './fx/TiltCard'
+import { Icon } from './Icon'
 
 export function GameCard({ game, className = '' }: { game: Game; className?: string }) {
   const { t, l, egp, num } = useI18n()
@@ -15,7 +16,7 @@ export function GameCard({ game, className = '' }: { game: Game; className?: str
       <Link
         to={`/game/${game.id}`}
         draggable={false}
-        className="group clip-angle relative flex h-full flex-col overflow-hidden border border-white/10 bg-night/80 transition-colors duration-300 hover:border-red-500/70"
+        className="group clip-angle relative flex h-full flex-col overflow-hidden border border-white/10 bg-night/80 transition-colors duration-300 hover:border-ice-300/70"
       >
         <div className="relative aspect-[3/4] overflow-hidden sm:aspect-[4/5]">
           <motion.div className="h-full w-full" whileHover={{ scale: 1.07 }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}>
@@ -31,7 +32,7 @@ export function GameCard({ game, className = '' }: { game: Game; className?: str
                   game.badge === 'preorder' ? 'bg-ice-300 text-void' : game.badge === 'hot' ? 'bg-white text-red-700' : 'bg-void/80 text-ice-300 ring-1 ring-ice-300/50'
                 }`}
               >
-                {game.badge === 'preorder' ? t.card.preorder : game.badge === 'hot' ? `🔥 ${t.card.hot}` : t.card.new}
+                {game.badge === 'preorder' ? t.card.preorder : game.badge === 'hot' ? <span className="flex items-center gap-1"><Icon name="flame" className="h-3 w-3" />{t.card.hot}</span> : t.card.new}
               </span>
             )}
           </div>

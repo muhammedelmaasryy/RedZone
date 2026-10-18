@@ -16,7 +16,7 @@ export function Footer() {
       <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr]">
         <div className="flex flex-col gap-5">
           <div className="flex items-center gap-3">
-            <img src="/brand/favicon.png" alt="" className="h-14 w-14 rounded-full ring-2 ring-red-600" />
+            <img src="/brand/favicon.png" alt="" className="h-14 w-14 rounded-full ring-2 ring-ice-300" />
             <div dir="ltr" className="leading-none">
               <div className="font-display text-2xl"><span className="text-red-600">RED</span> <span className="text-ice-300">ZONE</span></div>
               <div className="font-condensed tracking-[0.35em] text-white/60">{t.brand.tagline.toUpperCase()}</div>
@@ -26,7 +26,7 @@ export function Footer() {
           <PaymentStrip />
         </div>
         <div>
-          <h4 className="mb-4 font-condensed text-xl tracking-widest text-red-500 uppercase">{t.footer.links}</h4>
+          <h4 className="mb-4 font-condensed text-xl tracking-widest text-ice-300 uppercase">{t.footer.links}</h4>
           <ul className="flex flex-col gap-2 text-sm text-white/70">
             <li><Link className="hover:text-red-400" to="/games">{t.nav.games}</Link></li>
             <li><Link className="hover:text-red-400" to="/#plus">{t.nav.plus}</Link></li>
@@ -35,11 +35,11 @@ export function Footer() {
           </ul>
         </div>
         <div>
-          <h4 className="mb-4 font-condensed text-xl tracking-widest text-red-500 uppercase">{t.footer.contact}</h4>
+          <h4 className="mb-4 font-condensed text-xl tracking-widest text-ice-300 uppercase">{t.footer.contact}</h4>
           <ul className="flex flex-col gap-3 text-sm text-white/70">
             <li>
               <motion.a whileHover={{ x: 4 }} href={WHATSAPP} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-white">
-                <span className="h-2 w-2 rounded-full bg-green-500 shadow-[0_0_10px_#22c55e]" /> WhatsApp
+                <span className="h-2 w-2 rounded-full bg-ice-300" /> WhatsApp
               </motion.a>
             </li>
             <li>

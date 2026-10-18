@@ -10,12 +10,13 @@ import { GameCover } from '../components/GameCover'
 import { MagneticButton } from '../components/fx/MagneticButton'
 import { AnimatedPrice } from '../components/fx/CountUp'
 import { PaymentStrip } from '../components/PaymentLogos'
+import { Icon, type IconName } from '../components/Icon'
 
-const METHOD_STYLE: Record<PayMethod, { color: string; icon: string }> = {
-  vf: { color: '#e60000', icon: '📱' },
-  instapay: { color: '#a855f7', icon: '⚡' },
-  fawry: { color: '#ffd200', icon: '🏪' },
-  card: { color: '#a9bcf0', icon: '💳' },
+const METHOD_STYLE: Record<PayMethod, { color: string; icon: IconName }> = {
+  vf: { color: '#e60000', icon: 'phone' },
+  instapay: { color: '#a855f7', icon: 'bolt' },
+  fawry: { color: '#ffd200', icon: 'store' },
+  card: { color: '#a9bcf0', icon: 'card' },
 }
 
 export default function Checkout() {
@@ -51,7 +52,7 @@ export default function Checkout() {
   if (cart.length === 0 && !busy) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-6 px-4 pt-20 text-center">
-        <motion.div animate={{ rotate: [0, -10, 10, 0] }} transition={{ repeat: Infinity, duration: 2.5 }} className="text-7xl">🎮</motion.div>
+        <motion.div animate={{ rotate: [0, -10, 10, 0] }} transition={{ repeat: Infinity, duration: 2.5 }} className="text-red-500"><Icon name="gamepad" className="h-20 w-20" strokeWidth={1.5} /></motion.div>
         <p className="text-white/60">{t.cart.empty}</p>
         <MagneticButton to="/games">{t.hero.cta}</MagneticButton>
       </div>
@@ -97,7 +98,7 @@ export default function Checkout() {
                     className="relative flex items-center gap-3 overflow-hidden border border-white/10 p-4 text-start"
                   >
                     {method === m && <motion.span layoutId="pay-sel" className="absolute inset-0 border-2" style={{ borderColor: METHOD_STYLE[m].color, background: `${METHOD_STYLE[m].color}18` }} transition={{ type: 'spring', stiffness: 450, damping: 35 }} />}
-                    <span className="relative text-2xl">{METHOD_STYLE[m].icon}</span>
+                    <span className="relative" style={{ color: METHOD_STYLE[m].color }}><Icon name={METHOD_STYLE[m].icon} className="h-6 w-6" /></span>
                     <span className="relative text-sm font-bold">{t.checkout.methods[m]}</span>
                   </motion.button>
                 ))}
@@ -120,7 +121,7 @@ export default function Checkout() {
                           className={`flex cursor-pointer flex-col items-center gap-2 border-2 border-dashed p-6 text-center text-sm transition-colors ${drag ? 'border-red-500 bg-red-600/10' : receipt ? 'border-green-500/60 bg-green-500/5' : 'border-white/15 hover:border-white/40'}`}
                         >
                           <input type="file" accept="image/*" className="sr-only" onChange={(e) => onFile(e.target.files?.[0])} />
-                          <motion.span animate={drag ? { y: -6, scale: 1.2 } : { y: 0, scale: 1 }} className="text-3xl">{receipt ? '✅' : '🧾'}</motion.span>
+                          <motion.span animate={drag ? { y: -6, scale: 1.2 } : { y: 0, scale: 1 }} className={receipt ? 'text-green-400' : 'text-ice-300'}><Icon name={receipt ? 'check' : 'upload'} className="h-8 w-8" /></motion.span>
                           <span className={receipt ? 'text-green-300' : 'text-white/60'}>{receipt ? `${t.checkout.uploaded}: ${receipt}` : t.checkout.upload}</span>
                         </label>
                       </div>
@@ -198,7 +199,7 @@ export default function Checkout() {
                   )}
                 </MagneticButton>
               </div>
-              <p className="mt-4 flex items-center gap-2 text-xs text-white/50">🔒 {t.checkout.secure}</p>
+              <p className="mt-4 flex items-center gap-2 text-xs text-white/50"><Icon name="lock" className="h-3.5 w-3.5 text-ice-300" /> {t.checkout.secure}</p>
               <PaymentStrip className="mt-4" />
             </div>
             <Link to="/games" className="mt-4 block text-center text-sm text-white/40 hover:text-white">{t.order.shop}</Link>

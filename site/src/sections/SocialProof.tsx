@@ -7,6 +7,7 @@ import { Marquee } from '../components/fx/Marquee'
 import { SectionHead } from '../components/fx/Reveal'
 import { MagneticButton } from '../components/fx/MagneticButton'
 import { PSShape, StripedCircle } from '../components/fx/Shapes'
+import { Icon } from '../components/Icon'
 
 export function Counters() {
   const { t } = useI18n()
@@ -14,7 +15,7 @@ export function Counters() {
     { to: 5200, suffix: '+', label: t.counters.customers },
     { to: 54, suffix: '', label: t.counters.games },
     { to: 3, suffix: '', label: t.counters.minutes },
-    { to: 4.9, suffix: '★', label: t.counters.rating, dec: 1 },
+    { to: 4.9, suffix: '/5', label: t.counters.rating, dec: 1 },
   ]
   return (
     <section className="relative border-y border-white/10 bg-night py-14">
@@ -49,7 +50,7 @@ function Bubble({ r }: { r: (typeof reviews)[number] }) {
         </div>
       </div>
       <p className="text-sm leading-relaxed text-white/90">{l(r.text)}</p>
-      <div className="mt-1 text-end text-[10px] text-white/40" dir="ltr">{r.time} ✓✓</div>
+      <div className="mt-1 text-end text-[10px] text-white/40" dir="ltr"><span className="inline-flex items-center gap-1">{r.time} <Icon name="checks" className="h-3.5 w-3.5 text-[#53bdeb]" /></span></div>
     </div>
   )
 }

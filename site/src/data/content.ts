@@ -32,10 +32,10 @@ export const walletCards = [
 ]
 
 export const reviews: { name: string; city: L10n; text: L10n; game: string; time: string }[] = [
-  { name: 'Ahmed M.', city: { ar: 'الزقازيق', en: 'Zagazig' }, game: 'FC 27', time: '11:42 PM', text: { ar: 'والله ما خدت دقيقتين، صوّرت الكود والجهاز دخل علطول 🔥', en: 'Took under two minutes. Scanned the code and the console signed in right away 🔥' } },
+  { name: 'Ahmed M.', city: { ar: 'الزقازيق', en: 'Zagazig' }, game: 'FC 27', time: '11:42 PM', text: { ar: 'والله ما خدت دقيقتين، صوّرت الكود والجهاز دخل علطول', en: 'Took under two minutes. Scanned the code and the console signed in right away' } },
   { name: 'Youssef K.', city: { ar: 'منيا القمح', en: 'Minya el-Qamh' }, game: 'Spider-Man 2', time: '8:15 PM', text: { ar: 'تالت مرة اشتري منكم، محترمين جدًا والضمان حقيقي', en: 'Third time buying from you. Very respectful and the warranty is real.' } },
   { name: 'Omar H.', city: { ar: 'بلبيس', en: 'Belbeis' }, game: 'Black Ops 7', time: '6:03 PM', text: { ar: 'السعر أحسن من أي حتة سألت فيها، والتسليم سريع', en: 'Fair price and super fast delivery.' } },
-  { name: 'Mostafa A.', city: { ar: 'القاهرة', en: 'Cairo' }, game: 'GTA VI', time: '1:27 AM', text: { ar: 'حجزت GTA VI برايمري، مستني يوم النزول 😂❤️', en: 'Pre-ordered GTA VI primary, counting the days 😂❤️' } },
+  { name: 'Mostafa A.', city: { ar: 'القاهرة', en: 'Cairo' }, game: 'GTA VI', time: '1:27 AM', text: { ar: 'حجزت GTA VI برايمري، مستني يوم النزول', en: 'Pre-ordered GTA VI primary, counting the days' } },
   { name: 'Karim S.', city: { ar: 'العاشر', en: '10th of Ramadan' }, game: 'Ghost of Yōtei', time: '9:50 PM', text: { ar: 'الجهاز فصل مني مرة وكلمتهم رجّعوه في خمس دقايق', en: 'My console signed out once, they fixed it in five minutes.' } },
   { name: 'Hassan E.', city: { ar: 'المنصورة', en: 'Mansoura' }, game: 'Gran Turismo 7', time: '4:31 PM', text: { ar: 'أول مرة أشتري ديجيتال وكنت قلقان، طلعت أسهل حاجة', en: 'First time buying digital and I was worried. Turned out to be the easiest thing.' } },
 ]
@@ -64,11 +64,3 @@ export const faqs: { q: L10n; a: L10n }[] = [
 ]
 
 export const operators = ['Mahmoud', 'Ziad', 'Mohamed']
-
-export const recentOrders: { name: string; game: string; slot: L10n; mins: number }[] = [
-  { name: 'Ahmed', game: 'FC 27', slot: { ar: 'PS5 برايمري', en: 'PS5 Primary' }, mins: 2 },
-  { name: 'Mariam', game: 'Hogwarts Legacy', slot: { ar: 'PS4 سكندري', en: 'PS4 Secondary' }, mins: 4 },
-  { name: 'Omar', game: 'Black Ops 7', slot: { ar: 'PS5 سكندري', en: 'PS5 Secondary' }, mins: 7 },
-  { name: 'Youssef', game: 'GTA VI', slot: { ar: 'PS5 برايمري', en: 'PS5 Primary' }, mins: 9 },
-  { name: 'Karim', game: 'Spider-Man 2', slot: { ar: 'PS5 برايمري', en: 'PS5 Primary' }, mins: 12 },
-]

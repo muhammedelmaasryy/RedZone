@@ -63,14 +63,14 @@ export function Navbar() {
             <motion.img
               src="/brand/favicon.png"
               alt="Red Zone"
-              className="h-10 w-10 rounded-full ring-2 ring-red-600 sm:h-12 sm:w-12"
+              className="h-10 w-10 rounded-full ring-2 ring-ice-300 sm:h-12 sm:w-12"
               whileHover={{ rotate: -8, scale: 1.08 }}
             />
             <div className="leading-none" dir="ltr">
               <div className="font-display text-lg tracking-wide sm:text-xl">
                 <span className="text-red-600">RED</span> <span className="text-ice-300">ZONE</span>
               </div>
-              <div className="font-condensed text-xs tracking-[0.35em] text-white/60">STORE</div>
+              <div className="font-condensed text-xs tracking-[0.35em] text-ice-300/80">STORE</div>
             </div>
           </Link>
 
@@ -88,7 +88,7 @@ export function Navbar() {
                     <>
                       {l.label}
                       {isActive && !l.to.includes('#') && (
-                        <motion.span layoutId="nav-underline" className="absolute inset-x-3 -bottom-0.5 h-0.5 bg-red-500 glow" />
+                        <motion.span layoutId="nav-underline" className="absolute inset-x-3 -bottom-0.5 h-0.5 bg-ice-300 shadow-[0_0_12px_rgba(189,201,231,0.7)]" />
                       )}
                     </>
                   )}

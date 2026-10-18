@@ -16,7 +16,6 @@ const dict = {
       cta: 'تصفّح الألعاب',
       cta2: 'كلّمنا واتساب',
       badge: 'بدون مشاركة باسورد',
-      online: 'فريق الموافقة أونلاين دلوقتي',
       scroll: 'انزل',
     },
     trust: {
@@ -162,7 +161,7 @@ const dict = {
       approving: 'فريق ريد زون بيوافق على الدخول دلوقتي...',
       operator: 'تمت الموافقة بواسطة',
       done: 'الجهاز اتسجّل! استمتع باللعب',
-      confirm: 'أنا دخلت الحساب ✓',
+      confirm: 'أنا دخلت الحساب',
       confirmed: 'شكرًا! تم تأكيد التسليم وبدأ الضمان.',
       restart: 'جرّب العرض تاني',
       shop: 'كمّل تسوق',
@@ -183,7 +182,6 @@ const dict = {
       cta: 'Browse games',
       cta2: 'Chat on WhatsApp',
       badge: 'No password shared',
-      online: 'Approval team online now',
       scroll: 'Scroll',
     },
     trust: {
@@ -329,7 +327,7 @@ const dict = {
       approving: 'The Red Zone team is approving your sign-in...',
       operator: 'Approved by',
       done: 'Console signed in! Enjoy the game',
-      confirm: "I'm signed in ✓",
+      confirm: "I'm signed in",
       confirmed: 'Thanks! Delivery confirmed and your warranty has started.',
       restart: 'Replay the demo',
       shop: 'Keep shopping',

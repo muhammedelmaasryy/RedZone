@@ -7,6 +7,7 @@ import { useDebounce } from '../lib/hooks'
 import { GameCard } from '../components/GameCard'
 import { GameCover } from '../components/GameCover'
 import { Chevrons } from '../components/fx/Shapes'
+import { Icon } from '../components/Icon'
 
 type SlotFilter = 'all' | 'primary' | 'secondary' | 'full'
 type Sort = 'popular' | 'low' | 'high' | 'new'
@@ -112,7 +113,7 @@ export default function Catalog() {
                   </motion.span>
                 )}
                 {q && !pending && (
-                  <motion.button initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} onClick={() => setQ('')} className="me-3 text-white/40 hover:text-white" aria-label="Clear">✕</motion.button>
+                  <motion.button initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} onClick={() => setQ('')} className="me-3 text-white/40 hover:text-white" aria-label="Clear"><Icon name="x" /></motion.button>
                 )}
               </AnimatePresence>
             </div>
@@ -223,7 +224,7 @@ export default function Catalog() {
         </motion.div>
         {list.length === 0 && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-24 text-center text-white/50">
-            <div className="mb-4 text-5xl">👾</div>
+            <Icon name="gamepad" className="mx-auto mb-4 h-14 w-14 text-ice-400" strokeWidth={1.5} />
             {t.catalog.empty}
           </motion.div>
         )}

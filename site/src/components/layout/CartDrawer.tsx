@@ -6,6 +6,7 @@ import { cartTotal, PLUS_ADDON_PRICE, useStore } from '../../store'
 import { GameCover } from '../GameCover'
 import { MagneticButton } from '../fx/MagneticButton'
 import { AnimatedPrice } from '../fx/CountUp'
+import { Icon } from '../Icon'
 
 export function CartDrawer() {
   const { t, l, egp, dir } = useI18n()
@@ -36,12 +37,12 @@ export function CartDrawer() {
           >
             <div className="stripes-bg flex items-center justify-between border-b border-white/10 px-5 py-5">
               <h3 className="font-display text-2xl">{t.cart.title}</h3>
-              <button onClick={() => setCartOpen(false)} className="h-9 w-9 border border-white/20 hover:border-red-500" aria-label={t.common.close}>✕</button>
+              <button onClick={() => setCartOpen(false)} className="h-9 w-9 border border-white/20 hover:border-red-500" aria-label={t.common.close}><Icon name="x" className="mx-auto h-4 w-4" /></button>
             </div>
             <div className="flex-1 overflow-y-auto p-5">
               {cart.length === 0 ? (
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mt-16 flex flex-col items-center gap-4 text-center text-white/50">
-                  <motion.div animate={{ rotate: [0, -10, 10, 0] }} transition={{ repeat: Infinity, duration: 2.5 }} className="text-6xl">🎮</motion.div>
+                  <motion.div animate={{ rotate: [0, -10, 10, 0] }} transition={{ repeat: Infinity, duration: 2.5 }} className="text-red-500"><Icon name="gamepad" className="h-16 w-16" strokeWidth={1.5} /></motion.div>
                   {t.cart.empty}
                 </motion.div>
               ) : (

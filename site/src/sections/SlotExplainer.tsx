@@ -4,6 +4,7 @@ import { useI18n } from '../i18n'
 import { SectionHead } from '../components/fx/Reveal'
 import { AnimatedPrice } from '../components/fx/CountUp'
 import { PSShape } from '../components/fx/Shapes'
+import { Icon } from '../components/Icon'
 
 type Mode = 'primary' | 'secondary' | 'full'
 type Console = 'ps5' | 'ps4'
@@ -115,7 +116,7 @@ export function SlotExplainer() {
                         i === 3 ? (mode === 'full' ? 'border-white/20 text-white/30' : 'border-ice-400 text-ice-300') : on ? 'border-red-500 bg-red-600/20 text-red-400' : 'border-white/20 text-white/30'
                       }`}
                     >
-                      {i === 3 ? (mode === 'full' ? '—' : '!') : on ? '✓' : '✕'}
+                      {i === 3 ? (mode === 'full' ? '—' : '!') : <Icon name={on ? 'check' : 'x'} className="h-4 w-4" strokeWidth={3} />}
                     </motion.span>
                   </li>
                 )

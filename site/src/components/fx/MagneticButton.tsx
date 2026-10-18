@@ -18,7 +18,7 @@ type Props = {
 
 const styles = {
   red: 'bg-red-600 text-white hover:bg-red-500 glow',
-  ghost: 'border border-white/25 bg-white/5 text-white hover:border-red-500 hover:text-red-300 backdrop-blur',
+  ghost: 'border border-ice-300/40 bg-ice-300/5 text-ice-200 hover:border-ice-300 hover:text-white backdrop-blur',
   ice: 'bg-ice-300 text-void hover:bg-white',
 }
 

@@ -25,8 +25,8 @@ export function SectionHead({ kicker, title, sub, align = 'start' }: { kicker: s
       viewport={{ once: true, amount: 0.5 }}
       className={`mb-6 flex flex-col gap-2 sm:mb-10 sm:gap-3 ${align === 'center' ? 'items-center text-center' : ''}`}
     >
-      <motion.div variants={rise} className="flex items-center gap-3 text-red-500">
-        <span className="h-px w-10 bg-red-500" />
+      <motion.div variants={rise} className="flex items-center gap-3 text-ice-300">
+        <span className="h-px w-10 bg-gradient-to-r from-red-500 to-ice-300 rtl:bg-gradient-to-l" />
         <span className="font-condensed text-xl tracking-[0.2em] uppercase">{kicker}</span>
       </motion.div>
       <motion.h2 variants={rise} className="font-display text-3xl leading-tight text-white sm:text-5xl md:text-6xl">

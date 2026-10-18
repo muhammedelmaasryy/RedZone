@@ -6,6 +6,7 @@ import { SectionHead } from '../components/fx/Reveal'
 import { AnimatedPrice } from '../components/fx/CountUp'
 import { TiltCard } from '../components/fx/TiltCard'
 import { useStore } from '../store'
+import { Icon } from '../components/Icon'
 
 type Dur = 1 | 3 | 12
 
@@ -55,7 +56,7 @@ export function PlusCards() {
                   <AnimatedPrice value={tier.prices[dur]} className="font-display text-4xl" />
                   <ul className="flex flex-col gap-2 text-sm text-white/70">
                     {tier.perks.map((p, k) => (
-                      <li key={k} className="flex items-center gap-2"><span style={{ color: tier.color }}>✓</span>{l(p)}</li>
+                      <li key={k} className="flex items-center gap-2"><span style={{ color: tier.color }}><Icon name="check" className="h-4 w-4" strokeWidth={3} /></span>{l(p)}</li>
                     ))}
                   </ul>
                   <button

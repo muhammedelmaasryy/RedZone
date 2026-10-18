@@ -94,6 +94,10 @@ html.lenis, html.lenis body { height: auto; }
   -webkit-text-stroke: 1.5px rgb(255 255 255 / 0.85);
   color: transparent;
 }
+.text-outline-ice {
+  -webkit-text-stroke: 1.5px var(--color-ice-300);
+  color: transparent;
+}
 .text-glow { text-shadow: var(--glow-red); }
 .glow { box-shadow: var(--glow-red); }
 

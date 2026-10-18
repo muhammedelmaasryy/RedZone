@@ -46,7 +46,7 @@ function Shapes({ count, side }: { count: number; side: number }) {
         pos: [Math.cos(angle) * radius * 1.25 + side * 2.6, Math.sin(angle) * radius * 0.72, -2.5 - rnd() * 5] as [number, number, number],
         rot: [rnd() * Math.PI, rnd() * Math.PI, rnd() * Math.PI] as [number, number, number],
         scale: 0.45 + rnd() * 0.75,
-        color: i % 5 === 0 ? ICE : i % 7 === 0 ? WHITE : RED,
+        color: i % 3 === 0 ? ICE : i % 7 === 0 ? WHITE : RED,
         speed: 0.8 + rnd() * 1.6,
       }
     })

@@ -70,7 +70,7 @@ export function Hero({ ready }: { ready: boolean }) {
       <svg className="pointer-events-none absolute inset-0 h-full w-full" preserveAspectRatio="none" viewBox="0 0 1000 600" aria-hidden>
         <motion.path
           d="M 640 120 H 960 V 300"
-          fill="none" stroke="white" strokeOpacity="0.5" strokeWidth="1.2" vectorEffect="non-scaling-stroke"
+          fill="none" stroke="#bdc9e7" strokeOpacity="0.7" strokeWidth="1.2" vectorEffect="non-scaling-stroke"
           initial={{ pathLength: 0 }} animate={ready ? { pathLength: 1 } : {}} transition={{ duration: 1.6, delay: 0.6 }}
         />
         <motion.path
@@ -79,24 +79,17 @@ export function Hero({ ready }: { ready: boolean }) {
           initial={{ pathLength: 0 }} animate={ready ? { pathLength: 1 } : {}} transition={{ duration: 1, delay: 1 }}
         />
       </svg>
-      <Chevrons className="absolute top-28 start-6 hidden text-red-600 md:flex" count={5} />
+      <Chevrons className="absolute top-28 start-6 hidden text-ice-400 md:flex" count={5} />
       <Crosses className="absolute bottom-24 end-8 hidden text-ice-300/70 md:flex" count={5} />
 
-      <div className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-4 px-4 pt-4 pb-20 sm:gap-10 sm:px-6 sm:pt-0 sm:pb-24 lg:grid-cols-[1.15fr_1fr]">
+      <div className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-3 px-4 pt-2 pb-12 sm:gap-10 sm:px-6 sm:pt-0 sm:pb-24 lg:grid-cols-[1.15fr_1fr]">
         {/* copy */}
-        <motion.div style={{ y: yText, opacity: fade }} className="flex flex-col items-start gap-4 sm:gap-6">
+        <motion.div style={{ y: yText, opacity: fade }} className="flex flex-col items-start gap-3 sm:gap-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={ready ? { opacity: 1, y: 0 } : {}}
             className="flex flex-wrap items-center gap-3"
           >
-            <span className="flex items-center gap-2 rounded-full border border-green-500/40 bg-green-500/10 px-3 py-1 text-xs text-green-300">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
-              </span>
-              {t.hero.online}
-            </span>
             <span className="font-condensed text-base tracking-[0.25em] text-ice-300 uppercase sm:text-lg" dir="ltr">
               <ScrambleText text={t.hero.kicker} />
             </span>
@@ -110,7 +103,7 @@ export function Hero({ ready }: { ready: boolean }) {
                   variants={line}
                   initial="hidden"
                   animate={anim}
-                  className={`block ${i === 0 ? 'text-5xl text-red-600 text-glow sm:text-8xl lg:text-[8.5rem]' : 'text-[1.9rem] sm:text-6xl lg:text-7xl'} ${i === 2 ? 'text-outline' : ''}`}
+                  className={`block ${i === 0 ? 'text-5xl text-red-600 text-glow sm:text-8xl lg:text-[8.5rem]' : 'text-[1.9rem] sm:text-6xl lg:text-7xl'} ${i === 2 ? 'text-outline-ice' : ''}`}
                 >
                   {i === 0 ? <GlitchText text={w} /> : w}
                 </motion.span>
@@ -141,7 +134,7 @@ export function Hero({ ready }: { ready: boolean }) {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={ready ? { opacity: 1, scale: 1 } : {}}
             transition={{ delay: 1, type: 'spring' }}
-            className="clip-angle-sm flex items-center gap-2 border border-ice-300/30 bg-ice-300/10 px-3 py-2 text-sm text-ice-300"
+            className="clip-angle-sm hidden items-center gap-2 border border-ice-300/40 bg-ice-300/10 px-3 py-2 text-sm text-ice-300 sm:flex"
           >
             <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.2">
               <rect x="4" y="10" width="16" height="10" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /><path d="m3 3 18 18" />
@@ -151,7 +144,7 @@ export function Hero({ ready }: { ready: boolean }) {
         </motion.div>
 
         {/* mascot */}
-        <motion.div style={{ y: yMascot }} className="relative order-first mx-auto w-full max-w-[170px] sm:max-w-[340px] lg:order-none lg:max-w-[460px]">
+        <motion.div style={{ y: yMascot }} className="relative order-first mx-auto w-full max-w-[250px] sm:max-w-[340px] lg:order-none lg:max-w-[460px]">
           <motion.div
             initial={{ opacity: 0, scale: 0.6, rotate: -8 }}
             animate={ready ? { opacity: 1, scale: 1, rotate: 0 } : {}}
@@ -159,8 +152,9 @@ export function Hero({ ready }: { ready: boolean }) {
             style={{ rotateX: rotX, rotateY: rotY, x: tx, y: ty, transformPerspective: 900 }}
             className="relative"
           >
-            <div className="absolute inset-[8%] rounded-full bg-red-600/40 blur-[70px]" />
-            <svg viewBox="0 0 400 440" className="relative w-full drop-shadow-[0_0_40px_rgba(255,26,26,0.45)]">
+            <div className="absolute inset-[8%] rounded-full bg-red-600/35 blur-[70px]" />
+            <div className="absolute inset-[22%] translate-y-[10%] rounded-full bg-ice-400/25 blur-[60px]" />
+            <svg viewBox="0 0 400 440" className="relative w-full drop-shadow-[0_0_36px_rgba(169,188,240,0.35)]">
               <defs>
                 <clipPath id="shield">
                   <path d="M200 10 L380 70 V230 C380 330 300 400 200 430 C100 400 20 330 20 230 V70 Z" />
@@ -171,7 +165,7 @@ export function Hero({ ready }: { ready: boolean }) {
                 <image href="/brand/mascot.webp" x="0" y="20" width="400" height="420" preserveAspectRatio="xMidYMin slice" />
               </g>
               <path d="M200 10 L380 70 V230 C380 330 300 400 200 430 C100 400 20 330 20 230 V70 Z" fill="none" stroke="#ff1a1a" strokeWidth="10" />
-              <path d="M200 26 L366 82 V230 C366 320 292 384 200 412 C108 384 34 320 34 230 V82 Z" fill="none" stroke="#bdc9e7" strokeWidth="3" strokeOpacity="0.8" />
+              <path d="M200 26 L366 82 V230 C366 320 292 384 200 412 C108 384 34 320 34 230 V82 Z" fill="none" stroke="#bdc9e7" strokeWidth="7" />
             </svg>
             <motion.div
               className="absolute -start-6 top-10 text-red-500"
@@ -188,7 +182,7 @@ export function Hero({ ready }: { ready: boolean }) {
               <StripedCircle className="h-14 w-14" />
             </motion.div>
             <motion.div
-              className="absolute -bottom-2 start-8 text-ice-300"
+              className="absolute -bottom-2 start-8 text-ice-200"
               animate={{ rotate: 360 }}
               transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
             >
@@ -206,7 +200,7 @@ export function Hero({ ready }: { ready: boolean }) {
               <span className="text-red-600 [text-shadow:0_0_30px_rgba(255,26,26,.6)]">RED</span>{' '}
               <span className="text-ice-300">ZONE</span>
             </div>
-            <div className="font-condensed text-2xl tracking-[0.5em] text-white/80">STORE</div>
+            <div className="font-condensed text-2xl tracking-[0.5em] text-ice-300">STORE</div>
           </motion.div>
         </motion.div>
       </div>
