@@ -1,0 +1,133 @@
+@import "tailwindcss";
+
+/* Palette extracted from the Red Zone logo + cover banner (median-cut, 12 colors) */
+@theme {
+  --color-void: #050001;
+  --color-night: #110101;
+  --color-blood: #280000;
+  --color-ember: #38090f;
+  --color-red-300: #ff4d4d;
+  --color-red-500: #ff1a1a;
+  --color-red-600: #e50000;
+  --color-red-700: #b20001;
+  --color-red-800: #8c0001;
+  --color-ice-200: #d6d4da;
+  --color-ice-300: #bdc9e7;
+  --color-ice-400: #a9bcf0;
+  --color-dusk-500: #706b88;
+  --color-dusk-700: #4c3855;
+  --color-steel-800: #231317;
+
+  --font-display: "Russo One", "Lalezar", system-ui, sans-serif;
+  --font-condensed: "Teko", "Lalezar", system-ui, sans-serif;
+  --font-body: "Cairo", system-ui, sans-serif;
+
+  --animate-scan: scan 2.2s ease-in-out infinite;
+  --animate-flicker: flicker 4s linear infinite;
+
+  @keyframes scan {
+    0%, 100% { transform: translateY(0%); }
+    50% { transform: translateY(calc(var(--scan-h, 200px) - 4px)); }
+  }
+  @keyframes flicker {
+    0%, 19%, 21%, 62%, 64%, 100% { opacity: 1; }
+    20%, 63% { opacity: 0.55; }
+  }
+}
+
+:root {
+  color-scheme: dark;
+  --glow-red: 0 0 24px rgb(255 26 26 / 0.55), 0 0 64px rgb(229 0 0 / 0.25);
+}
+
+html[dir="rtl"] {
+  --font-display: "Lalezar", "Russo One", system-ui, sans-serif;
+  --font-condensed: "Lalezar", "Teko", system-ui, sans-serif;
+}
+
+html,
+body {
+  background: var(--color-void);
+  color: #f4f2f6;
+  font-family: var(--font-body);
+  overflow-x: clip;
+}
+
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+
+::selection { background: var(--color-red-600); color: white; }
+
+/* ---- Brand motifs ---- */
+.stripes-bg {
+  background-image: repeating-linear-gradient(
+    -55deg,
+    transparent 0 46px,
+    rgb(229 0 0 / 0.16) 46px 92px
+  );
+}
+.grid-bg {
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.035) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.dot-bg {
+  background-image: radial-gradient(rgb(255 26 26 / 0.5) 1px, transparent 1.5px);
+  background-size: 14px 14px;
+}
+.noise::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+.clip-angle {
+  clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
+}
+.clip-angle-sm {
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+}
+.text-outline {
+  -webkit-text-stroke: 1.5px rgb(255 255 255 / 0.85);
+  color: transparent;
+}
+.text-glow { text-shadow: var(--glow-red); }
+.glow { box-shadow: var(--glow-red); }
+
+/* Glitch headline (RGB split) */
+.glitch { position: relative; display: inline-block; }
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.glitch::before { color: #ff1a1a; transform: translate(-2px, 0); mix-blend-mode: screen; animation: glitch-a 3.2s infinite steps(1); }
+.glitch::after { color: #a9bcf0; transform: translate(2px, 0); mix-blend-mode: screen; animation: glitch-b 3.2s infinite steps(1); }
+@keyframes glitch-a {
+  0%, 88%, 100% { clip-path: inset(0 0 100% 0); }
+  89% { clip-path: inset(10% 0 60% 0); transform: translate(-6px, 1px); }
+  92% { clip-path: inset(55% 0 20% 0); transform: translate(5px, -1px); }
+  95% { clip-path: inset(30% 0 45% 0); transform: translate(-3px, 0); }
+}
+@keyframes glitch-b {
+  0%, 88%, 100% { clip-path: inset(0 0 100% 0); }
+  90% { clip-path: inset(65% 0 10% 0); transform: translate(6px, 0); }
+  93% { clip-path: inset(15% 0 70% 0); transform: translate(-5px, 1px); }
+  96% { clip-path: inset(40% 0 35% 0); transform: translate(3px, 0); }
+}
+
+.rz-marquee { animation: rz-marquee 40s linear infinite; }
+@keyframes rz-marquee { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+
+.scrollbar-none { scrollbar-width: none; }
+.scrollbar-none::-webkit-scrollbar { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .glitch::before, .glitch::after { animation: none; }
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; }
+}

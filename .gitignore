@@ -1,0 +1,13 @@
+# Internal research and raw client assets (kept local, not in the repo)
+research_notes/
+reports/
+*.jpeg
+PS account QR login automation.md
+
+# Node / build
+node_modules/
+dist/
+.vercel/
+*.log
+.env*
+.DS_Store
