@@ -18,13 +18,6 @@ const dict = {
       badge: 'بدون مشاركة باسورد',
       scroll: 'انزل',
     },
-    trust: {
-      delivery: 'تسليم خلال دقايق',
-      warranty: 'ضمان مكتوب طول مدة الاشتراك',
-      noPass: 'QR بدل الباسورد',
-      support: 'دعم من ١١ ص لـ ١١ م',
-    },
-    marquee: 'الأكثر طلبًا الأسبوع ده',
     slots: {
       kicker: 'افهم قبل ما تشتري',
       title: 'برايمري ولا سكندري؟',
@@ -178,19 +171,9 @@ const dict = {
       title1: 'Play',
       title2: 'before you',
       title3: 'leave the couch',
-      sub: 'Pick your game, scan the QR code on your console screen, and we approve the sign-in in seconds. No password ever sent to you.',
       cta: 'Browse games',
       cta2: 'Chat on WhatsApp',
-      badge: 'No password shared',
-      scroll: 'Scroll',
     },
-    trust: {
-      delivery: 'Delivered in minutes',
-      warranty: 'Written warranty for the full term',
-      noPass: 'QR instead of passwords',
-      support: 'Support 11 AM – 11 PM',
-    },
-    marquee: 'Most wanted this week',
     slots: {
       kicker: 'Know before you buy',
       title: 'Primary or Secondary?',

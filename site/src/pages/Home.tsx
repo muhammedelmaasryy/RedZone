@@ -1,5 +1,4 @@
 import { Hero } from '../sections/Hero'
-import { TrustStrip } from '../sections/TrustStrip'
 import { SlotExplainer } from '../sections/SlotExplainer'
 import { DeliveryFlow } from '../sections/DeliveryFlow'
 import { Bestsellers } from '../sections/Bestsellers'
@@ -11,7 +10,6 @@ export default function Home({ ready }: { ready: boolean }) {
   return (
     <>
       <Hero ready={ready} />
-      <TrustStrip />
       <Bestsellers />
       <SlotExplainer />
       <DeliveryFlow />

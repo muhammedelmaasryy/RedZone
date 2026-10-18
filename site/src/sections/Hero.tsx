@@ -73,6 +73,8 @@ export function Hero({ ready }: { ready: boolean }) {
 
       <div className="pointer-events-none absolute inset-y-0 start-0 w-full bg-gradient-to-r from-void/80 via-void/30 to-transparent lg:w-[60%] rtl:bg-gradient-to-l" />
 
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent to-void sm:h-32" />
+
       {/* HUD lines */}
       <svg className="pointer-events-none absolute inset-0 h-full w-full" preserveAspectRatio="none" viewBox="0 0 1000 600" aria-hidden>
         <motion.path
