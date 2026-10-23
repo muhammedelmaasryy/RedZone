@@ -21,8 +21,14 @@ let lenis: Lenis | null = null
 
 function useSmoothScroll() {
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    lenis = new Lenis({ duration: 1.15, smoothWheel: true })
+    if (
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+      window.matchMedia('(pointer: coarse)').matches ||
+      window.innerWidth < 1024
+    ) {
+      return
+    }
+    lenis = new Lenis({ duration: 1.05, smoothWheel: true, syncTouch: false })
     let raf = 0
     const loop = (t: number) => { lenis?.raf(t); raf = requestAnimationFrame(loop) }
     raf = requestAnimationFrame(loop)

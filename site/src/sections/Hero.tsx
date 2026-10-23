@@ -38,7 +38,7 @@ export function Hero({ ready }: { ready: boolean }) {
   const [activeStage, setActiveStage] = useState(0)
   const [featuredIdx, setFeaturedIdx] = useState(0)
 
-  const small = useMediaQuery('(max-width: 768px)')
+  const isMobile = useMediaQuery('(max-width: 1023px)')
   const gl = useMemo(() => webglAvailable(), [])
 
   useEffect(() => {
@@ -116,11 +116,11 @@ export function Hero({ ready }: { ready: boolean }) {
             left & right editorial columns.
          ===================================================================== */}
       <div className="pointer-events-none sticky top-0 z-20 flex h-[100svh] w-full flex-col overflow-hidden lg:block">
-        {gl && (
+        {!isMobile && gl && (
           <Suspense fallback={null}>
-            <div className="absolute inset-x-0 top-0 h-[60svh] opacity-75 lg:inset-0 lg:h-full">
+            <div className="absolute inset-0 h-full opacity-75">
               <HeroScene
-                lowPower={small}
+                lowPower={false}
                 active={inView}
                 scrollRef={scrollRef}
                 accentHex={featuredGame.cover.accent}
@@ -135,6 +135,7 @@ export function Hero({ ready }: { ready: boolean }) {
             containerRef={containerRef}
             scrollRef={scrollRef}
             accentHex={featuredGame.cover.accent}
+            active={inView}
           />
         </div>
 
@@ -143,7 +144,7 @@ export function Hero({ ready }: { ready: boolean }) {
             Stays pinned at the bottom of the screen and cross-fades between
             Stages 1, 2, and 3 so text NEVER covers the top 60% animation!
            =================================================================== */}
-        <div className="pointer-events-auto relative z-30 flex h-[40svh] w-full flex-col justify-between border-t border-red-500/30 bg-gradient-to-b from-night/95 via-night/98 to-void px-4 pt-3 pb-4 shadow-[0_-18px_45px_rgba(0,0,0,0.85)] backdrop-blur-xl sm:px-6 lg:hidden">
+        <div className="pointer-events-auto relative z-30 flex h-[40svh] w-full flex-col justify-between border-t border-red-500/30 bg-gradient-to-b from-night/98 via-void to-void px-4 pt-3 pb-4 shadow-[0_-18px_45px_rgba(0,0,0,0.88)] sm:px-6 lg:hidden">
           {/* Dock Header Bar: Active Stage Kicker + Interactive 1 · 2 · 3 Stage Switcher */}
           <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-2">
             <div className="flex items-center gap-2">
