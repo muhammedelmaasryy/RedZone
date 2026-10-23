@@ -5,7 +5,6 @@ import {
   useRef,
   useState,
   type PointerEvent,
-  type TouchEvent,
 } from 'react'
 import { Link } from 'react-router-dom'
 import { WHATSAPP } from '../data/content'
@@ -36,25 +35,25 @@ const line = {
 export function Hero({ ready }: { ready: boolean }) {
   const { t, lang, dir, egp, num } = useI18n()
   const containerRef = useRef<HTMLElement>(null)
+  const stageAreaRef = useRef<HTMLDivElement>(null)
   const scrollRef = useRef(0)
+  const activeStageRef = useRef(0)
 
   const [activeStage, setActiveStage] = useState(0)
   const [featuredIdx, setFeaturedIdx] = useState(0)
   const [autoPlay, setAutoPlay] = useState(true)
 
-  // Finger touch / drag state on the Hero section itself
-  const gestureRef = useRef<{
+  // Desktop mouse drag state
+  const mouseDragRef = useRef<{
     active: boolean
     startX: number
-    startY: number
     baseP: number
-    mode: 'undecided' | 'scrub'
+    scrubbing: boolean
   }>({
     active: false,
     startX: 0,
-    startY: 0,
     baseP: 0,
-    mode: 'undecided',
+    scrubbing: false,
   })
 
   const inView = useInView(containerRef, { amount: 0.05 })
@@ -66,21 +65,21 @@ export function Hero({ ready }: { ready: boolean }) {
 
   const selectStage = useCallback((idx: number, pauseAuto = true) => {
     const clamped = ((idx % 3) + 3) % 3
+    activeStageRef.current = clamped
     setActiveStage(clamped)
     scrollRef.current = clamped * 0.5
     if (pauseAuto) setAutoPlay(false)
   }, [])
 
   const stepStage = useCallback((delta: number, pauseAuto = true) => {
-    setActiveStage((prev) => {
-      const next = ((prev + delta) % 3 + 3) % 3
-      scrollRef.current = next * 0.5
-      return next
-    })
+    const next = ((activeStageRef.current + delta) % 3 + 3) % 3
+    activeStageRef.current = next
+    setActiveStage(next)
+    scrollRef.current = next * 0.5
     if (pauseAuto) setAutoPlay(false)
   }, [])
 
-  // Gentle auto-advance every 5.5s until the user interacts with the Hero
+  // Gentle auto-advance every 7s until the user interacts with the Hero
   useEffect(() => {
     if (!ready || !autoPlay || !inView) return
     const timer = setTimeout(() => {
@@ -89,95 +88,158 @@ export function Hero({ ready }: { ready: boolean }) {
     return () => clearTimeout(timer)
   }, [ready, autoPlay, inView, activeStage, stepStage])
 
-  // Native Touch Handlers on the Hero Section so scrolling/swiping your finger on the Hero scrubs the animation
-  const onTouchStart = (e: TouchEvent<HTMLElement>) => {
-    if ((e.target as HTMLElement).closest('a,button')) return
-    const touch = e.touches[0]
-    if (!touch) return
-    gestureRef.current = {
-      active: true,
-      startX: touch.clientX,
-      startY: touch.clientY,
-      baseP: scrollRef.current,
-      mode: 'undecided',
+  // Non-passive native Touch & Wheel listeners on the Hero section so scrolling inside the Hero
+  // locks to the Hero animation (e.preventDefault()) and does NOT scroll the whole page!
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+
+    let touchActive = false
+    let startX = 0
+    let startY = 0
+    let baseP = 0
+    let startedOnStageCanvas = false
+    let gestureMode: 'undecided' | 'hero-scrub' | 'page-scroll' = 'undecided'
+    let wheelCooldown = 0
+
+    const handleTouchStart = (e: globalThis.TouchEvent) => {
+      const target = e.target as HTMLElement | null
+      if (target?.closest('a,button')) return
+      const touch = e.touches[0]
+      if (!touch) return
+
+      touchActive = true
+      startX = touch.clientX
+      startY = touch.clientY
+      baseP = scrollRef.current
+      startedOnStageCanvas = Boolean(stageAreaRef.current?.contains(target))
+      gestureMode = 'undecided'
     }
-  }
 
-  const onTouchMove = (e: TouchEvent<HTMLElement>) => {
-    const g = gestureRef.current
-    if (!g.active) return
-    const touch = e.touches[0]
-    if (!touch) return
+    const handleTouchMove = (e: globalThis.TouchEvent) => {
+      if (!touchActive) return
+      const touch = e.touches[0]
+      if (!touch) return
 
-    const dx = touch.clientX - g.startX
-    const dy = touch.clientY - g.startY
+      const dx = touch.clientX - startX
+      const dy = touch.clientY - startY
 
-    if (g.mode === 'undecided') {
-      if (Math.abs(dx) > 8 || Math.abs(dy) > 8) {
-        g.mode = 'scrub'
-        setAutoPlay(false)
+      if (gestureMode === 'undecided') {
+        if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return
+
+        const isHoriz = Math.abs(dx) >= Math.abs(dy)
+        const swipingDown = dy < 0 // finger moves up -> scrolling down
+        const swipingUp = dy > 0 // finger moves down -> scrolling up
+
+        // If the user touches directly on the Hero animation stage, OR swipes horizontally,
+        // OR scrolls vertically while not yet at the exit boundary, lock 100% inside the Hero!
+        if (
+          startedOnStageCanvas ||
+          isHoriz ||
+          (swipingDown && baseP < 0.98) ||
+          (swipingUp && baseP > 0.02 && window.scrollY <= 10)
+        ) {
+          gestureMode = 'hero-scrub'
+          setAutoPlay(false)
+        } else {
+          gestureMode = 'page-scroll'
+        }
+      }
+
+      if (gestureMode === 'hero-scrub') {
+        // Prevent the browser from scrolling the page while scrubbing inside the Hero!
+        if (e.cancelable) e.preventDefault()
+
+        const signX = dir === 'rtl' ? 1 : -1
+        const primaryDelta =
+          Math.abs(dx) >= Math.abs(dy)
+            ? (dx * signX) / Math.max(220, window.innerWidth * 0.48)
+            : -dy / Math.max(240, window.innerHeight * 0.42)
+
+        const nextP = Math.max(0, Math.min(1, baseP + primaryDelta * 0.55))
+        scrollRef.current = nextP
+
+        const nearestStage = nextP < 0.25 ? 0 : nextP < 0.75 ? 1 : 2
+        if (nearestStage !== activeStageRef.current) {
+          activeStageRef.current = nearestStage
+          setActiveStage(nearestStage)
+        }
       }
     }
 
-    if (g.mode === 'scrub') {
+    const handleTouchEnd = (e: globalThis.TouchEvent) => {
+      if (!touchActive) return
+      touchActive = false
+      if (gestureMode !== 'hero-scrub') return
+
+      const touch = e.changedTouches[0]
+      const dx = touch ? touch.clientX - startX : 0
+      const dy = touch ? touch.clientY - startY : 0
       const signX = dir === 'rtl' ? 1 : -1
-      // Combine horizontal swipe OR vertical finger drag on the hero to scrub smoothly through the 3 stages
-      const primaryDelta =
-        Math.abs(dx) >= Math.abs(dy)
-          ? (dx * signX) / Math.max(220, window.innerWidth * 0.48)
-          : -dy / Math.max(260, window.innerHeight * 0.45)
 
-      const nextP = Math.max(0, Math.min(1, g.baseP + primaryDelta * 0.55))
-      scrollRef.current = nextP
-      const nearestStage = nextP < 0.25 ? 0 : nextP < 0.75 ? 1 : 2
-      if (nearestStage !== activeStage) {
-        setActiveStage(nearestStage)
+      const startStage = Math.round(baseP * 2)
+      let targetStage = Math.round(scrollRef.current * 2)
+
+      if (Math.abs(dx) >= Math.abs(dy)) {
+        if (dx * signX > 32) targetStage = Math.min(2, startStage + 1)
+        else if (dx * signX < -32) targetStage = Math.max(0, startStage - 1)
+      } else {
+        if (dy < -32) targetStage = Math.min(2, startStage + 1)
+        else if (dy > 32) targetStage = Math.max(0, startStage - 1)
+      }
+
+      selectStage(targetStage, true)
+    }
+
+    const handleWheel = (e: globalThis.WheelEvent) => {
+      if (window.scrollY > 16) return
+      const goingDown = e.deltaY > 0
+      const goingUp = e.deltaY < 0
+      const curStage = activeStageRef.current
+
+      if ((goingDown && curStage < 2) || (goingUp && curStage > 0)) {
+        if (e.cancelable) e.preventDefault()
+        const now = performance.now()
+        if (now - wheelCooldown < 650) return
+        if (Math.abs(e.deltaY) < 12) return
+        wheelCooldown = now
+        selectStage(curStage + (goingDown ? 1 : -1), true)
       }
     }
-  }
 
-  const onTouchEnd = (e: TouchEvent<HTMLElement>) => {
-    const g = gestureRef.current
-    if (!g.active) return
-    g.active = false
-    if (g.mode !== 'scrub') return
+    el.addEventListener('touchstart', handleTouchStart, { passive: true })
+    el.addEventListener('touchmove', handleTouchMove, { passive: false })
+    el.addEventListener('touchend', handleTouchEnd, { passive: true })
+    el.addEventListener('touchcancel', handleTouchEnd, { passive: true })
+    el.addEventListener('wheel', handleWheel, { passive: false })
 
-    const touch = e.changedTouches[0]
-    const dx = touch ? touch.clientX - g.startX : 0
-    const dy = touch ? touch.clientY - g.startY : 0
-    const signX = dir === 'rtl' ? 1 : -1
-
-    let targetStage = Math.round(scrollRef.current * 2)
-    if (Math.abs(dx) >= Math.abs(dy)) {
-      if (dx * signX > 36) targetStage = Math.min(2, Math.round(g.baseP * 2) + 1)
-      else if (dx * signX < -36) targetStage = Math.max(0, Math.round(g.baseP * 2) - 1)
-    } else {
-      if (dy < -36) targetStage = Math.min(2, Math.round(g.baseP * 2) + 1)
-      else if (dy > 36) targetStage = Math.max(0, Math.round(g.baseP * 2) - 1)
+    return () => {
+      el.removeEventListener('touchstart', handleTouchStart)
+      el.removeEventListener('touchmove', handleTouchMove)
+      el.removeEventListener('touchend', handleTouchEnd)
+      el.removeEventListener('touchcancel', handleTouchEnd)
+      el.removeEventListener('wheel', handleWheel)
     }
-
-    selectStage(targetStage, true)
-  }
+  }, [dir, selectStage])
 
   // Desktop mouse drag support on the Hero
   const onPointerDown = (e: PointerEvent<HTMLElement>) => {
     if (e.pointerType === 'touch' || (e.target as HTMLElement).closest('a,button')) return
-    gestureRef.current = {
+    mouseDragRef.current = {
       active: true,
       startX: e.clientX,
-      startY: e.clientY,
       baseP: scrollRef.current,
-      mode: 'undecided',
+      scrubbing: false,
     }
   }
 
   const onPointerMove = (e: PointerEvent<HTMLElement>) => {
     if (e.pointerType === 'touch') return
-    const g = gestureRef.current
+    const g = mouseDragRef.current
     if (!g.active) return
     const dx = e.clientX - g.startX
     if (Math.abs(dx) > 10) {
-      g.mode = 'scrub'
+      g.scrubbing = true
       setAutoPlay(false)
       const signX = dir === 'rtl' ? 1 : -1
       const nextP = Math.max(0, Math.min(1, g.baseP + ((dx * signX) / 420) * 0.5))
@@ -187,10 +249,10 @@ export function Hero({ ready }: { ready: boolean }) {
 
   const onPointerUp = (e: PointerEvent<HTMLElement>) => {
     if (e.pointerType === 'touch') return
-    const g = gestureRef.current
+    const g = mouseDragRef.current
     if (!g.active) return
     g.active = false
-    if (g.mode !== 'scrub') return
+    if (!g.scrubbing) return
     const dx = e.clientX - g.startX
     const signX = dir === 'rtl' ? 1 : -1
     if (dx * signX > 45) selectStage(Math.min(2, activeStage + 1), true)
@@ -210,10 +272,6 @@ export function Hero({ ready }: { ready: boolean }) {
   return (
     <section
       ref={containerRef}
-      onTouchStart={onTouchStart}
-      onTouchMove={onTouchMove}
-      onTouchEnd={onTouchEnd}
-      onTouchCancel={onTouchEnd}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
@@ -275,9 +333,14 @@ export function Hero({ ready }: { ready: boolean }) {
       {/* =====================================================================
           LAYER 1 (z-10): 4K 60/120FPS CANVAS INTERACTIVE REEL SPINE
          ===================================================================== */}
-      <div className="pointer-events-none relative z-10 flex h-full w-full flex-col lg:block">
-        {/* TOP 64% ON MOBILE / FULL 100% ON DESKTOP: Unobstructed 3D Animation Stage */}
-        <div className="relative h-[64svh] w-full shrink-0 pt-14 lg:h-full lg:pt-0">
+      <div className="relative z-10 flex h-full w-full flex-col lg:block">
+        {/* TOP 64% ON MOBILE / FULL 100% ON DESKTOP: Unobstructed 3D Animation Stage
+            touch-none on the animation stage ensures scrolling your finger on the
+            animation NEVER scrolls the page outside the Hero! */}
+        <div
+          ref={stageAreaRef}
+          className="pointer-events-auto relative h-[64svh] w-full shrink-0 touch-none pt-14 lg:h-full lg:pt-0"
+        >
           <ReelSpine
             scrollRef={scrollRef}
             accentHex={featuredGame.cover.accent}
