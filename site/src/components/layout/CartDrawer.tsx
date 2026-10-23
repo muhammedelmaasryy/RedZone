@@ -10,7 +10,7 @@ import { Icon } from '../Icon'
 
 export function CartDrawer() {
   const { t, l, egp, dir } = useI18n()
-  const { cart, cartOpen, setCartOpen, removeFromCart } = useStore()
+  const { cart, cartOpen, setCartOpen, removeFromCart, user, setAuthOpen } = useStore()
   const nav = useNavigate()
   const from = dir === 'rtl' ? '-100%' : '100%'
 
@@ -83,8 +83,15 @@ export function CartDrawer() {
                   <AnimatedPrice value={cartTotal(cart)} className="font-display text-2xl text-white" />
                 </div>
                 <div className="w-full [&>div]:w-full">
-                  <MagneticButton strength={0.15} onClick={() => { setCartOpen(false); nav('/checkout') }}>
-                    {t.cart.checkout} →
+                  <MagneticButton
+                    strength={0.15}
+                    onClick={() => {
+                      setCartOpen(false)
+                      if (user) nav('/checkout')
+                      else setAuthOpen(true, '/checkout')
+                    }}
+                  >
+                    {t.cart.checkout} <span className="rtl:rotate-180">→</span>
                   </MagneticButton>
                 </div>
               </div>

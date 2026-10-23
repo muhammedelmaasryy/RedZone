@@ -21,6 +21,8 @@ export default function Product() {
   const nav = useNavigate()
   const addToCart = useStore((s) => s.addToCart)
   const pushToast = useStore((s) => s.pushToast)
+  const user = useStore((s) => s.user)
+  const setAuthOpen = useStore((s) => s.setAuthOpen)
   const coverRef = useRef<HTMLDivElement>(null)
   const [fly, setFly] = useState<Fly>(null)
 
@@ -56,7 +58,10 @@ export default function Product() {
     const btn = document.getElementById('cart-button')
     if (coverRef.current && btn && !goCheckout) setFly({ from: coverRef.current.getBoundingClientRect(), to: btn.getBoundingClientRect() })
     pushToast({ title: t.cart.trophy, body: `${game.short} · ${l(slotLabel[slot])}` })
-    if (goCheckout) nav('/checkout')
+    if (goCheckout) {
+      if (user) nav('/checkout')
+      else setAuthOpen(true, '/checkout')
+    }
   }
 
   return (

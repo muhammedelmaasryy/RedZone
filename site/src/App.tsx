@@ -6,6 +6,7 @@ import { I18nProvider } from './i18n'
 import { Navbar } from './components/layout/Navbar'
 import { Footer } from './components/layout/Footer'
 import { CartDrawer } from './components/layout/CartDrawer'
+import { AuthModal } from './components/layout/AuthModal'
 import { Preloader } from './components/layout/Preloader'
 import { Floaters, Toasts } from './components/layout/Toasts'
 import { CursorGlow } from './components/fx/CursorGlow'
@@ -105,6 +106,7 @@ export default function App() {
         <AppRoutes ready={ready} />
         <Footer />
         <CartDrawer />
+        <AuthModal />
         <Toasts />
         <Floaters />
       </BrowserRouter>

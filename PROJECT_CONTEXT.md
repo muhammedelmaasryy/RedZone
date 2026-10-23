@@ -198,12 +198,12 @@ redzone/
   - a "demo build, illustrative prices" note
 
 ### Home (`/`)
-1. **Hero:**
-   - an R3F scene with floating glowing PlayStation shapes, a halo ring and sparkles; the camera follows the mouse and the scroll position
-   - the mascot in a shield that tilts with the mouse
-   - the headline lines slide up, and "Play" / "العب" plays one glitch burst (it glitches again on hover)
-   - magnetic CTA buttons and a "No password shared" badge
-   - on phones: a smaller hero, a larger mascot placed above the text, and the 3D at reduced opacity
+1. **Hero (3-stage scroll-connected sequence):**
+   - a sticky R3F + SVG/Canvas stage (`HeroScene.tsx` + `ReelSpine.tsx`) synchronized 1:1 with a 3-stage (`300svh`) scroll layout separated by angled transition bands:
+     - **Stage 1 (Red Zone Mascot & Splitting DualSense):** the Red Zone Mascot Shield (`/brand/mascot.webp`) sits at the center flanked by a giant 3D-shaded DualSense controller that splits open as you scroll, cascading PlayStation shapes (△ ○ ✕ □) and Blu-ray game discs downward
+     - **Stage 2 (Holographic PSN QR Portal & Phone Laser Scan):** the stream funnels through a cyber data conduit into an octagonal PSN QR sign-in portal while a 3D-shaded smartphone slides in from the side and sweeps a volumetric laser scan beam across the QR code
+     - **Stage 3 (Double-Helix Data Ribbons & Standing PS5 Tower):** intertwined crimson-red and ice-blue helical data ribbons spiral out of the unlocked portal and plug into a standing PS5 console tower crowned by a floating platinum trophy and concentric arena shockwaves, paired with an interactive unlocked-game vault card
+     - **Mobile Sticky Reel View (`< 1024px`):** pins the panning PlayStation animation in the upper `55svh` of the phone screen while compact frosted-glass cards slide smoothly across the bottom half as you scroll
 2. **Trust strip:** two skewed marquees showing trust points with icons, and game names.
 3. **Best sellers:** a native horizontal scroller with snap points. It works with touch, trackpad, Shift+wheel, mouse drag and arrow buttons, and has a progress bar. It is RTL-aware.
 4. **Primary or Secondary? explainer:** a PS5/PS4 toggle and three account types, with animated feature checks, a price that animates to its new value, and a small console illustration.
@@ -320,6 +320,7 @@ npm run preview    # serve the build
    - Fixed the hero lag and glitching on load: the 3D is warmed up behind the preloader, the post-processing is lighter, the glitch plays once instead of looping, blur animations were removed, and the scene pauses off screen.
    - The workflow switched to the user committing and pushing directly to `main`.
 6. **Round 5 feedback:** added real cover art (portrait for cards, product page and cart; landscape for the product page backdrop) for every game. Sources were verified by research and the files are self-hosted. Black Ops 7 uses a clean 5:6 Steam capsule because the 2:3 PlayStation Store image prints "Cross-Gen Bundle". Platform chips on covers moved to the top-left so they no longer collide with discount badges. Research notes: `research_notes/Game cover image sources/`, report: `reports/Game cover image sources.md` (both gitignored).
+7. **Round 6 feedback:** replaced the single-screen hero with a 3-stage scroll-connected 3D & editorial landing sequence (`Hero.tsx` + `HeroScene.tsx` + `i18n.tsx`) where a central 3D narrative spine flows continuously across three full-viewport sections: a splitting 3D DualSense controller & reactor core in Stage 1 cascades △ ○ ✕ □ shards into a cyber extractor chamber on the Stage 1/2 border, pours a neon plasma stream into a holographic QR funnel and carafe with a side verification beam in Stage 2, and twists into intertwined crimson & ice-blue double-helix ribbons that bloom inside an unlocked PS5 console vault in Stage 3.
 
 ---
 

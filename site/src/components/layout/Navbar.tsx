@@ -4,6 +4,7 @@ import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useI18n } from '../../i18n'
 import { useStore } from '../../store'
 import { Crosses } from '../fx/Shapes'
+import { Icon } from '../Icon'
 
 function LangToggle() {
   const { lang, toggle } = useI18n()
@@ -30,6 +31,8 @@ export function Navbar() {
   const { t } = useI18n()
   const cart = useStore((s) => s.cart)
   const setCartOpen = useStore((s) => s.setCartOpen)
+  const user = useStore((s) => s.user)
+  const setAuthOpen = useStore((s) => s.setAuthOpen)
   const { scrollY } = useScroll()
   const [hidden, setHidden] = useState(false)
   const [solid, setSolid] = useState(false)
@@ -99,6 +102,22 @@ export function Navbar() {
 
           <div className="flex items-center gap-2 sm:gap-3">
             <LangToggle />
+            <motion.button
+              type="button"
+              onClick={() => setAuthOpen(true)}
+              whileTap={{ scale: 0.94 }}
+              className={`flex h-10 items-center gap-2 border px-2.5 text-xs font-bold transition ${
+                user
+                  ? 'border-ice-300/40 bg-ice-300/10 text-ice-200 hover:border-red-500'
+                  : 'border-white/20 bg-white/5 text-white/80 hover:border-red-500 hover:text-white'
+              }`}
+              aria-label={user ? user.name : t.auth.navSignIn}
+            >
+              <Icon name="user" className="h-4 w-4 text-red-500" />
+              <span className="hidden max-w-[96px] truncate sm:inline">
+                {user ? user.name.split(' ')[0] : t.auth.navSignIn}
+              </span>
+            </motion.button>
             <motion.button
               onClick={() => setCartOpen(true)}
               whileTap={{ scale: 0.9 }}
