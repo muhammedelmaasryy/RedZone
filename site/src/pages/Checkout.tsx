@@ -407,16 +407,25 @@ export default function Checkout() {
               <h2 className="mb-4 font-display text-xl">{t.checkout.summary}</h2>
               <ul className="mb-5 flex flex-col gap-3">
                 {cart.map((c) => {
-                  const g = gameById(c.gameId)!
+                  const g = gameById(c.gameId)
                   return (
                     <li key={c.key} className="flex items-center gap-3">
-                      <GameCover game={g} className="h-14 w-11 shrink-0" />
+                      {g ? (
+                        <GameCover game={g} className="h-14 w-11 shrink-0" />
+                      ) : (
+                        <div
+                          className="flex h-14 w-11 shrink-0 items-center justify-center rounded border border-white/15 bg-void font-display text-lg"
+                          style={{ color: c.customAccent ?? '#ff1a1a' }}
+                        >
+                          +
+                        </div>
+                      )}
                       <div className="flex-1 text-sm">
                         <div className="font-bold" dir="ltr" style={{ textAlign: 'start' }}>
-                          {g.short}
+                          {g ? g.short : c.customTitle}
                         </div>
                         <div className="text-xs text-white/50">
-                          {l(slotLabel[c.slot])}
+                          {g ? l(slotLabel[c.slot]) : c.customSubtitle}
                           {c.addPlus ? ' + PS Plus' : ''}
                         </div>
                       </div>

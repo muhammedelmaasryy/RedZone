@@ -49,7 +49,7 @@ export function CartDrawer() {
                 <ul className="flex flex-col gap-3">
                   <AnimatePresence initial={false}>
                     {cart.map((c) => {
-                      const g = gameById(c.gameId)!
+                      const g = gameById(c.gameId)
                       return (
                         <motion.li
                           key={c.key}
@@ -59,10 +59,23 @@ export function CartDrawer() {
                           exit={{ opacity: 0, x: -60, height: 0, marginBottom: 0 }}
                           className="flex gap-3 border border-white/10 bg-white/[0.03] p-3"
                         >
-                          <GameCover game={g} className="h-20 w-16 shrink-0" />
+                          {g ? (
+                            <GameCover game={g} className="h-20 w-16 shrink-0" />
+                          ) : (
+                            <div
+                              className="flex h-20 w-16 shrink-0 flex-col items-center justify-center rounded border border-white/15 bg-gradient-to-br from-night to-void font-display text-xl"
+                              style={{ color: c.customAccent ?? '#ff1a1a' }}
+                            >
+                              +
+                            </div>
+                          )}
                           <div className="flex flex-1 flex-col">
-                            <div className="text-sm font-bold" dir="ltr" style={{ textAlign: 'start' }}>{g.title}</div>
-                            <div className="text-xs text-ice-300">{l(slotLabel[c.slot])}</div>
+                            <div className="text-sm font-bold" dir="ltr" style={{ textAlign: 'start' }}>
+                              {g ? g.title : c.customTitle}
+                            </div>
+                            <div className="text-xs text-ice-300">
+                              {g ? l(slotLabel[c.slot]) : c.customSubtitle}
+                            </div>
                             {c.addPlus && <div className="text-xs text-white/50">+ PS Plus ({egp(PLUS_ADDON_PRICE)})</div>}
                             <div className="mt-auto flex items-center justify-between">
                               <span className="font-display text-red-500">{egp(c.price + (c.addPlus ? PLUS_ADDON_PRICE : 0))}</span>

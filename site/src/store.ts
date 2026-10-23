@@ -1,7 +1,16 @@
 import { create } from 'zustand'
 import type { SlotType } from './data/games'
 
-export type CartItem = { key: string; gameId: string; slot: SlotType; price: number; addPlus: boolean }
+export type CartItem = {
+  key: string
+  gameId: string
+  slot: SlotType
+  price: number
+  addPlus: boolean
+  customTitle?: string
+  customSubtitle?: string
+  customAccent?: string
+}
 export type PayMethod = 'vf' | 'instapay' | 'fawry' | 'card'
 export type UserProfile = { name: string; phone: string }
 export type Order = { id: string; items: CartItem[]; total: number; method: PayMethod; name: string; phone?: string; createdAt: number }

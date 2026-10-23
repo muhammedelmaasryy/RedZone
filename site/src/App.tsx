@@ -13,6 +13,7 @@ import { CursorGlow } from './components/fx/CursorGlow'
 import Home from './pages/Home'
 
 const Catalog = lazy(() => import('./pages/Catalog'))
+const Plus = lazy(() => import('./pages/Plus'))
 const Product = lazy(() => import('./pages/Product'))
 const Checkout = lazy(() => import('./pages/Checkout'))
 const Order = lazy(() => import('./pages/Order'))
@@ -90,6 +91,7 @@ function AppRoutes({ ready }: { ready: boolean }) {
       <Routes location={loc} key={loc.pathname}>
         <Route path="/" element={<motion.main exit={{ opacity: 0, transition: { duration: 0.3 } }}><Home ready={ready} /></motion.main>} />
         <Route path="/games" element={<PageWrap><Suspense fallback={<div className="h-screen" />}><Catalog /></Suspense></PageWrap>} />
+        <Route path="/plus" element={<PageWrap><Suspense fallback={<div className="h-screen" />}><Plus /></Suspense></PageWrap>} />
         <Route path="/game/:id" element={<PageWrap><Suspense fallback={<div className="h-screen" />}><Product /></Suspense></PageWrap>} />
         <Route path="/checkout" element={<PageWrap><Suspense fallback={<div className="h-screen" />}><Checkout /></Suspense></PageWrap>} />
         <Route path="/order/:id" element={<PageWrap><Suspense fallback={<div className="h-screen" />}><Order /></Suspense></PageWrap>} />

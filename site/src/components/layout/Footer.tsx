@@ -10,7 +10,10 @@ export function Footer() {
   return (
     <footer className="relative overflow-hidden border-t border-red-900/50 bg-night">
       <div className="stripes-bg pointer-events-none absolute inset-0 opacity-30" />
-      <div className="pointer-events-none absolute -bottom-10 start-0 w-full select-none text-center font-display text-[22vw] leading-none text-white/[0.03]" dir="ltr">
+      <div
+        className="pointer-events-none absolute -bottom-10 start-0 w-full select-none text-center font-display text-[22vw] leading-none text-white/[0.03]"
+        dir="ltr"
+      >
         RED ZONE
       </div>
       <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr]">
@@ -18,32 +21,68 @@ export function Footer() {
           <div className="flex items-center gap-3">
             <img src="/brand/favicon.png" alt="" className="h-14 w-14 rounded-full ring-2 ring-ice-300" />
             <div dir="ltr" className="leading-none">
-              <div className="font-display text-2xl"><span className="text-red-600">RED</span> <span className="text-ice-300">ZONE</span></div>
-              <div className="font-condensed tracking-[0.35em] text-white/60">{t.brand.tagline.toUpperCase()}</div>
+              <div className="font-display text-2xl">
+                <span className="text-red-600">RED</span> <span className="text-ice-300">ZONE</span>
+              </div>
+              <div className="font-condensed tracking-[0.35em] text-white/60">
+                {t.brand.tagline.toUpperCase()}
+              </div>
             </div>
           </div>
           <p className="max-w-sm text-sm leading-relaxed text-ice-200/60">{t.footer.about}</p>
           <PaymentStrip />
         </div>
         <div>
-          <h4 className="mb-4 font-condensed text-xl tracking-widest text-ice-300 uppercase">{t.footer.links}</h4>
+          <h4 className="mb-4 font-condensed text-xl tracking-widest text-ice-300 uppercase">
+            {t.footer.links}
+          </h4>
           <ul className="flex flex-col gap-2 text-sm text-white/70">
-            <li><Link className="hover:text-red-400" to="/games">{t.nav.games}</Link></li>
-            <li><Link className="hover:text-red-400" to="/#plus">{t.nav.plus}</Link></li>
-            <li><Link className="hover:text-red-400" to="/#how">{t.nav.how}</Link></li>
-            <li><Link className="hover:text-red-400" to="/#faq">{t.nav.faq}</Link></li>
+            <li>
+              <Link className="hover:text-red-400" to="/">
+                {t.nav.home}
+              </Link>
+            </li>
+            <li>
+              <Link className="hover:text-red-400" to="/games">
+                {t.nav.games}
+              </Link>
+            </li>
+            <li>
+              <Link className="hover:text-red-400" to="/plus">
+                {t.nav.plus}
+              </Link>
+            </li>
+            <li>
+              <Link className="hover:text-red-400" to="/#how">
+                {t.nav.how}
+              </Link>
+            </li>
           </ul>
         </div>
         <div>
-          <h4 className="mb-4 font-condensed text-xl tracking-widest text-ice-300 uppercase">{t.footer.contact}</h4>
+          <h4 className="mb-4 font-condensed text-xl tracking-widest text-ice-300 uppercase">
+            {t.footer.contact}
+          </h4>
           <ul className="flex flex-col gap-3 text-sm text-white/70">
             <li>
-              <motion.a whileHover={{ x: 4 }} href={WHATSAPP} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-white">
+              <motion.a
+                whileHover={{ x: 4 }}
+                href={WHATSAPP}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 hover:text-white"
+              >
                 <span className="h-2 w-2 rounded-full bg-ice-300" /> WhatsApp
               </motion.a>
             </li>
             <li>
-              <motion.a whileHover={{ x: 4 }} href={FACEBOOK} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-white">
+              <motion.a
+                whileHover={{ x: 4 }}
+                href={FACEBOOK}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 hover:text-white"
+              >
                 <span className="h-2 w-2 rounded-full bg-ice-400" /> Facebook
               </motion.a>
             </li>

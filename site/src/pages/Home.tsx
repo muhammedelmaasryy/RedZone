@@ -1,24 +1,15 @@
 import { Hero } from '../sections/Hero'
-import { SlotExplainer } from '../sections/SlotExplainer'
+import { Bestsellers, NewReleasesSection, OffersSection } from '../sections/Bestsellers'
 import { DeliveryFlow } from '../sections/DeliveryFlow'
-import { Bestsellers } from '../sections/Bestsellers'
-import { DealOfDay } from '../sections/DealOfDay'
-import { PlusCards } from '../sections/PlusCards'
-import { Counters, CTABand, FAQ, Reviews } from '../sections/SocialProof'
 
 export default function Home({ ready }: { ready: boolean }) {
   return (
     <>
       <Hero ready={ready} />
+      <OffersSection />
+      <NewReleasesSection />
       <Bestsellers />
-      <SlotExplainer />
       <DeliveryFlow />
-      <DealOfDay />
-      <Counters />
-      <PlusCards />
-      <Reviews />
-      <FAQ />
-      <CTABand />
     </>
   )
 }

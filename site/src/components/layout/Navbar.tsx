@@ -49,9 +49,7 @@ export function Navbar() {
   const links = [
     { to: '/', label: t.nav.home },
     { to: '/games', label: t.nav.games },
-    { to: '/#plus', label: t.nav.plus },
-    { to: '/#how', label: t.nav.how },
-    { to: '/#faq', label: t.nav.faq },
+    { to: '/plus', label: t.nav.plus },
   ]
 
   return (
