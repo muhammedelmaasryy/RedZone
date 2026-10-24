@@ -635,7 +635,7 @@ export function ReelSpine({
       const p = curP
 
       const logicalW = isMobile ? 510 : 540
-      const logicalH = isMobile ? 640 : 820
+      const logicalH = isMobile ? 560 : 760
       const scale = Math.min(viewW / logicalW, viewH / logicalH)
 
       const targetWorldY =

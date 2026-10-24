@@ -260,7 +260,7 @@ export function Hero({ ready }: { ready: boolean }) {
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
-      className="relative h-[72svh] min-h-[470px] max-h-[580px] w-full overflow-hidden border-b border-white/10 select-none lg:h-[90svh] lg:min-h-[640px] lg:max-h-none lg:border-b-0"
+      className="relative h-[88svh] min-h-[600px] max-h-[820px] w-full overflow-hidden border-b border-white/10 select-none lg:h-[100svh] lg:min-h-[720px] lg:max-h-none lg:border-b-0"
     >
       {/* =====================================================================
           LAYER 0 (z-0): DYNAMIC STAGE-SYNCHRONIZED RADIAL BACKGROUNDS
@@ -300,7 +300,7 @@ export function Hero({ ready }: { ready: boolean }) {
         type="button"
         onClick={() => stepStage(-1, true)}
         aria-label="Previous stage"
-        className="pointer-events-auto absolute start-2.5 top-[29%] z-40 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-night/85 text-white shadow-[0_0_20px_rgba(0,0,0,0.7)] transition hover:border-red-500 hover:bg-red-600 active:scale-95 sm:start-5 sm:h-11 sm:w-11 lg:top-1/2 lg:h-12 lg:w-12"
+        className="pointer-events-auto absolute start-2.5 top-[38%] z-40 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-night/85 text-white shadow-[0_0_20px_rgba(0,0,0,0.7)] transition hover:border-red-500 hover:bg-red-600 active:scale-95 sm:start-5 sm:h-11 sm:w-11 lg:top-1/2 lg:h-12 lg:w-12"
       >
         <span className="text-sm sm:text-base lg:text-lg ltr:rotate-180">→</span>
       </button>
@@ -309,7 +309,7 @@ export function Hero({ ready }: { ready: boolean }) {
         type="button"
         onClick={() => stepStage(1, true)}
         aria-label="Next stage"
-        className="pointer-events-auto absolute end-2.5 top-[29%] z-40 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-night/85 text-white shadow-[0_0_20px_rgba(0,0,0,0.7)] transition hover:border-red-500 hover:bg-red-600 active:scale-95 sm:end-5 sm:h-11 sm:w-11 lg:top-1/2 lg:h-12 lg:w-12"
+        className="pointer-events-auto absolute end-2.5 top-[38%] z-40 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-night/85 text-white shadow-[0_0_20px_rgba(0,0,0,0.7)] transition hover:border-red-500 hover:bg-red-600 active:scale-95 sm:end-5 sm:h-11 sm:w-11 lg:top-1/2 lg:h-12 lg:w-12"
       >
         <span className="text-sm sm:text-base lg:text-lg rtl:rotate-180">→</span>
       </button>
@@ -323,7 +323,7 @@ export function Hero({ ready }: { ready: boolean }) {
             animation NEVER scrolls the page outside the Hero! */}
         <div
           ref={stageAreaRef}
-          className="pointer-events-auto relative h-[42svh] min-h-[260px] max-h-[330px] w-full shrink-0 touch-none pt-12 lg:h-full lg:min-h-0 lg:max-h-none lg:pt-0"
+          className="pointer-events-auto relative h-[64svh] min-h-[420px] max-h-[600px] w-full shrink-0 touch-none pt-14 lg:h-full lg:min-h-0 lg:max-h-none lg:pt-0"
         >
           <ReelSpine
             scrollRef={scrollRef}
@@ -356,9 +356,6 @@ export function Hero({ ready }: { ready: boolean }) {
                     <span>{t.hero.title2} </span>
                     <span className="text-outline-ice">{t.hero.title3}</span>
                   </h1>
-                  <p className="line-clamp-2 text-xs leading-snug text-white/75 sm:text-sm">
-                    {t.hero.s1Desc}
-                  </p>
                   <div className="mt-0.5 flex flex-wrap items-center gap-2">
                     <MagneticButton to="/games">
                       {t.hero.cta} <span className="rtl:rotate-180">→</span>
@@ -386,9 +383,6 @@ export function Hero({ ready }: { ready: boolean }) {
                     <span>{t.hero.s2Title1} </span>
                     <span className="text-red-500 text-glow">{t.hero.s2Title2}</span>
                   </h2>
-                  <p className="line-clamp-2 text-xs leading-snug text-white/75 sm:text-sm">
-                    {t.hero.s2Desc}
-                  </p>
                   <div className="mt-0.5 flex items-center justify-between border-t border-white/10 pt-1.5">
                     <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-ice-300">
                       <Icon name="shield" className="h-3.5 w-3.5 text-red-500" />
@@ -549,12 +543,9 @@ export function Hero({ ready }: { ready: boolean }) {
                   <div className="mb-1.5 font-condensed text-base tracking-[0.22em] text-red-500 uppercase">
                     {t.hero.s1Kicker}
                   </div>
-                  <h2 className="mb-3 font-display text-3xl text-white">
+                  <h2 className="mb-6 font-display text-3xl text-white">
                     {t.hero.s1Title}
                   </h2>
-                  <p className="mb-6 max-w-md text-base leading-relaxed text-white/75">
-                    {t.hero.s1Desc}
-                  </p>
                   <div className="flex flex-wrap items-center gap-3">
                     <MagneticButton to="/games">
                       {t.hero.cta} <span className="rtl:rotate-180">→</span>
@@ -588,9 +579,6 @@ export function Hero({ ready }: { ready: boolean }) {
                       <span className="block">{t.hero.s2Title1}</span>
                       <span className="block text-red-500 text-glow">{t.hero.s2Title2}</span>
                     </h2>
-                    <p className="mt-4 max-w-md text-base leading-relaxed text-white/75">
-                      {t.hero.s2Desc}
-                    </p>
                   </div>
                 </div>
 
@@ -726,9 +714,6 @@ export function Hero({ ready }: { ready: boolean }) {
                     <span className="block text-outline-ice">{t.hero.s3Title3}</span>
                   </h2>
 
-                  <p className="max-w-md text-base leading-relaxed text-white/75">
-                    {t.hero.s3Desc}
-                  </p>
 
                   <div className="mt-1 flex flex-wrap items-center gap-3">
                     <MagneticButton to="/games">
