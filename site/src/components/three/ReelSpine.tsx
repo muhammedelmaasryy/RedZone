@@ -105,11 +105,48 @@ function drawPSSymbol(
 }
 
 /**
- * Pre-renders the Stage 1 Mascot Shield into an offscreen sprite once.
+ * Renders the Striped Holographic Circle satellite from commit d7a8f3fe.
+ */
+function drawStripedCircle(ctx: CanvasRenderingContext2D, radius: number, angle: number) {
+  ctx.save()
+  ctx.beginPath()
+  ctx.arc(0, 0, radius, 0, Math.PI * 2)
+  ctx.clip()
+
+  ctx.fillStyle = '#140003'
+  ctx.fill()
+
+  ctx.save()
+  ctx.rotate(angle)
+  ctx.strokeStyle = 'rgba(229, 0, 0, 0.65)'
+  ctx.lineWidth = 3.5
+  for (let x = -radius * 1.6; x <= radius * 1.6; x += 7) {
+    ctx.beginPath()
+    ctx.moveTo(x, -radius * 1.6)
+    ctx.lineTo(x, radius * 1.6)
+    ctx.stroke()
+  }
+  ctx.restore()
+
+  ctx.strokeStyle = '#a9bcf0'
+  ctx.lineWidth = 2.4
+  ctx.stroke()
+
+  ctx.strokeStyle = 'rgba(255, 26, 26, 0.55)'
+  ctx.lineWidth = 1.2
+  ctx.beginPath()
+  ctx.arc(0, 0, radius - 3, 0, Math.PI * 2)
+  ctx.stroke()
+  ctx.restore()
+}
+
+/**
+ * Pre-renders the 3D Mascot Shield Plate with rich depth, glossy glass sheen,
+ * and dual crimson/ice-blue neon rims from commit d7a8f3fe.
  */
 function bakeShieldSprite(mascotImg?: HTMLImageElement): HTMLCanvasElement {
-  const w = 280
-  const h = 320
+  const w = 380
+  const h = 440
   const dpr = 1.5
   const c = document.createElement('canvas')
   c.width = Math.round(w * dpr)
@@ -118,56 +155,116 @@ function bakeShieldSprite(mascotImg?: HTMLImageElement): HTMLCanvasElement {
   if (!ctx) return c
 
   ctx.scale(dpr, dpr)
-  ctx.translate(w / 2, 145)
+  ctx.translate(w / 2, 220)
 
+  // Exact shield paths from commit d7a8f3fe normalized to center (0, 0)
   const shieldOuterPath = new Path2D(
-    'M 0 -130 L 118 -86 L 118 22 C 118 92 66 138 0 160 C -66 138 -118 92 -118 22 L -118 -86 Z',
+    'M 0 -210 L 180 -150 L 180 10 C 180 110 100 180 0 210 C -100 180 -180 110 -180 10 L -180 -150 Z',
   )
   const shieldInnerPath = new Path2D(
-    'M 0 -118 L 106 -78 L 106 20 C 106 82 58 124 0 144 C -58 124 -106 82 -106 20 L -106 -78 Z',
+    'M 0 -194 L 166 -138 L 166 10 C 166 100 92 164 0 192 C -92 164 -166 100 -166 10 L -166 -138 Z',
   )
 
-  ctx.fillStyle = '#240002'
+  // 1. Deep crimson metallic base fill
+  const baseGrad = ctx.createLinearGradient(0, -210, 0, 210)
+  baseGrad.addColorStop(0, '#2e0005')
+  baseGrad.addColorStop(0.5, '#160002')
+  baseGrad.addColorStop(1, '#080001')
+  ctx.fillStyle = baseGrad
   ctx.fill(shieldOuterPath)
 
+  // 2. Mascot image clipped inside inner shield with glass reflection and vignette
   if (mascotImg && mascotImg.naturalWidth > 0 && mascotImg.naturalHeight > 0) {
     ctx.save()
     ctx.clip(shieldInnerPath)
-    const boxX = -130
-    const boxY = -125
-    const boxW = 260
-    const boxH = 285
+
+    const boxX = -180
+    const boxY = -190
+    const boxW = 360
+    const boxH = 400
     const imgScale = Math.max(boxW / mascotImg.naturalWidth, boxH / mascotImg.naturalHeight)
     const drawW = mascotImg.naturalWidth * imgScale
     const drawH = mascotImg.naturalHeight * imgScale
     const drawX = boxX + (boxW - drawW) / 2
     const drawY = boxY
     ctx.drawImage(mascotImg, drawX, drawY, drawW, drawH)
+
+    // Inner 3D cavity vignette (creates recessed depth behind the metallic frame)
+    const innerVignette = ctx.createLinearGradient(0, -194, 0, 192)
+    innerVignette.addColorStop(0, 'rgba(10, 0, 2, 0.55)')
+    innerVignette.addColorStop(0.2, 'rgba(0, 0, 0, 0)')
+    innerVignette.addColorStop(0.8, 'rgba(0, 0, 0, 0)')
+    innerVignette.addColorStop(1, 'rgba(20, 0, 3, 0.75)')
+    ctx.fillStyle = innerVignette
+    ctx.fill(shieldInnerPath)
+
+    // 3D Glass diagonal specular reflection sheen
+    ctx.beginPath()
+    ctx.moveTo(-180, -190)
+    ctx.lineTo(80, -190)
+    ctx.lineTo(-40, 120)
+    ctx.lineTo(-180, 50)
+    ctx.closePath()
+    const glassGrad = ctx.createLinearGradient(-150, -180, 60, 80)
+    glassGrad.addColorStop(0, 'rgba(255, 255, 255, 0.22)')
+    glassGrad.addColorStop(0.45, 'rgba(255, 255, 255, 0.08)')
+    glassGrad.addColorStop(1, 'rgba(255, 255, 255, 0)')
+    ctx.fillStyle = glassGrad
+    ctx.fill()
+
     ctx.restore()
   }
 
-  ctx.strokeStyle = 'rgba(255, 26, 26, 0.32)'
-  ctx.lineWidth = 12
+  // 3. Outer Crimson 3D Armor Rim
+  ctx.strokeStyle = 'rgba(255, 26, 26, 0.28)'
+  ctx.lineWidth = 18
   ctx.stroke(shieldOuterPath)
 
-  ctx.strokeStyle = '#ff1a1a'
-  ctx.lineWidth = 5.5
+  const rimGrad = ctx.createLinearGradient(0, -210, 0, 210)
+  rimGrad.addColorStop(0, '#ff4d4d')
+  rimGrad.addColorStop(0.3, '#ff1a1a')
+  rimGrad.addColorStop(0.7, '#c20002')
+  rimGrad.addColorStop(1, '#660001')
+  ctx.strokeStyle = rimGrad
+  ctx.lineWidth = 9
   ctx.stroke(shieldOuterPath)
+
+  // Top metallic crest specular highlight
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.65)'
+  ctx.lineWidth = 2.5
+  ctx.beginPath()
+  ctx.moveTo(-100, -177)
+  ctx.lineTo(0, -210)
+  ctx.lineTo(100, -177)
+  ctx.stroke()
+
+  // 4. Inner Ice-Blue Bevel Rim (stroke="#bdc9e7" strokeWidth="7" from commit d7a8f3fe)
+  ctx.strokeStyle = 'rgba(189, 201, 231, 0.35)'
+  ctx.lineWidth = 10
+  ctx.stroke(shieldInnerPath)
 
   ctx.strokeStyle = '#bdc9e7'
-  ctx.lineWidth = 3
+  ctx.lineWidth = 5.5
   ctx.stroke(shieldInnerPath)
+
+  ctx.strokeStyle = '#ffffff'
+  ctx.lineWidth = 1.8
+  ctx.beginPath()
+  ctx.moveTo(-80, -164)
+  ctx.lineTo(0, -194)
+  ctx.lineTo(80, -164)
+  ctx.stroke()
 
   return c
 }
 
 /**
- * Pre-renders the Left & Right DualSense Controller Halves into offscreen sprites once
- * so the 60-120fps render loop only performs a single GPU drawImage call per half.
+ * Pre-renders the 3D Extrusion Backing for the shield, providing physical depth
+ * when viewed from angles or when tilted.
  */
-function bakeDualSenseHalf(side: 'left' | 'right'): HTMLCanvasElement {
-  const w = 200
-  const h = 280
+function bakeShieldExtrusionSprite(): HTMLCanvasElement {
+  const w = 380
+  const h = 440
   const dpr = 1.5
   const c = document.createElement('canvas')
   c.width = Math.round(w * dpr)
@@ -176,174 +273,18 @@ function bakeDualSenseHalf(side: 'left' | 'right'): HTMLCanvasElement {
   if (!ctx) return c
 
   ctx.scale(dpr, dpr)
-  if (side === 'left') {
-    ctx.translate(180, 100)
-    const leftShellPath = new Path2D(
-      'M 0 -68 L -82 -68 Q -138 -66 -152 -8 Q -170 58 -140 138 Q -126 170 -96 158 Q -72 146 -58 86 L -42 40 L 0 40 Z',
-    )
-    const leftGripPath = new Path2D(
-      'M -140 68 Q -130 142 -98 156 Q -74 146 -60 86 L -42 40 L 0 40 L 0 10 L -68 16 Q -114 22 -140 68 Z',
-    )
-    const leftBumperPath = new Path2D('M -114 -68 Q -74 -94 -26 -76 L -20 -54 L -108 -44 Z')
-    const leftTouchpadPath = new Path2D('M 0 -64 L -56 -64 L -44 -6 L 0 -6 Z')
+  ctx.translate(w / 2, 220)
 
-    const shellGradL = ctx.createLinearGradient(-150, -70, 0, 160)
-    shellGradL.addColorStop(0, '#ffffff')
-    shellGradL.addColorStop(0.55, '#dce5f7')
-    shellGradL.addColorStop(1, '#8c9bb8')
+  const shieldOuterPath = new Path2D(
+    'M 0 -210 L 180 -150 L 180 10 C 180 110 100 180 0 210 C -100 180 -180 110 -180 10 L -180 -150 Z',
+  )
 
-    ctx.fillStyle = '#170409'
-    ctx.strokeStyle = '#ff1a1a'
-    ctx.lineWidth = 1.5
-    ctx.fillRect(-18, -58, 18, 96)
-    ctx.strokeRect(-18, -58, 18, 96)
+  ctx.fillStyle = '#0a0002'
+  ctx.fill(shieldOuterPath)
 
-    ctx.fillStyle = '#18050a'
-    ctx.strokeStyle = '#a9bcf0'
-    ctx.lineWidth = 1.8
-    ctx.fill(leftBumperPath)
-    ctx.stroke(leftBumperPath)
-
-    ctx.fillStyle = shellGradL
-    ctx.strokeStyle = '#ffffff'
-    ctx.lineWidth = 1.5
-    ctx.fill(leftShellPath)
-    ctx.stroke(leftShellPath)
-
-    ctx.fillStyle = '#120307'
-    ctx.strokeStyle = '#a9bcf0'
-    ctx.lineWidth = 1.1
-    ctx.fill(leftGripPath)
-    ctx.stroke(leftGripPath)
-
-    ctx.fillStyle = '#19050b'
-    ctx.strokeStyle = '#a9bcf0'
-    ctx.lineWidth = 1.8
-    ctx.fill(leftTouchpadPath)
-    ctx.stroke(leftTouchpadPath)
-    ctx.strokeStyle = '#ff1a1a'
-    ctx.lineWidth = 3.5
-    ctx.beginPath()
-    ctx.moveTo(-59, -62)
-    ctx.lineTo(-47, -4)
-    ctx.stroke()
-
-    ctx.save()
-    ctx.translate(-96, -14)
-    ctx.fillStyle = '#180409'
-    ctx.strokeStyle = '#a9bcf0'
-    ctx.lineWidth = 1.5
-    drawRoundedRect(ctx, -22, -7.5, 44, 15, 3.5)
-    ctx.fill()
-    ctx.stroke()
-    drawRoundedRect(ctx, -7.5, -22, 15, 44, 3.5)
-    ctx.fill()
-    ctx.stroke()
-    ctx.restore()
-
-    ctx.save()
-    ctx.translate(-46, 20)
-    ctx.fillStyle = '#090104'
-    ctx.strokeStyle = '#ff1a1a'
-    ctx.lineWidth = 2.2
-    ctx.beginPath()
-    ctx.arc(0, 0, 19, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.stroke()
-    ctx.strokeStyle = '#a9bcf0'
-    ctx.lineWidth = 1
-    ctx.beginPath()
-    ctx.arc(0, 0, 12, 0, Math.PI * 2)
-    ctx.stroke()
-    ctx.restore()
-  } else {
-    ctx.translate(20, 100)
-    const rightShellPath = new Path2D(
-      'M 0 -68 L 82 -68 Q 138 -66 152 -8 Q 170 58 140 138 Q 126 170 96 158 Q 72 146 58 86 L 42 40 L 0 40 Z',
-    )
-    const rightGripPath = new Path2D(
-      'M 140 68 Q 130 142 98 156 Q 74 146 60 86 L 42 40 L 0 40 L 0 10 L 68 16 Q 114 22 140 68 Z',
-    )
-    const rightBumperPath = new Path2D('M 114 -68 Q 74 -94 26 -76 L 20 -54 L 108 -44 Z')
-    const rightTouchpadPath = new Path2D('M 0 -64 L 56 -64 L 44 -6 L 0 -6 Z')
-
-    const shellGradR = ctx.createLinearGradient(0, -70, 150, 160)
-    shellGradR.addColorStop(0, '#ffffff')
-    shellGradR.addColorStop(0.55, '#dce5f7')
-    shellGradR.addColorStop(1, '#8c9bb8')
-
-    ctx.fillStyle = '#170409'
-    ctx.strokeStyle = '#a9bcf0'
-    ctx.lineWidth = 1.5
-    ctx.fillRect(0, -58, 18, 96)
-    ctx.strokeRect(0, -58, 18, 96)
-
-    ctx.fillStyle = '#18050a'
-    ctx.strokeStyle = '#ff1a1a'
-    ctx.lineWidth = 1.8
-    ctx.fill(rightBumperPath)
-    ctx.stroke(rightBumperPath)
-
-    ctx.fillStyle = shellGradR
-    ctx.strokeStyle = '#ffffff'
-    ctx.lineWidth = 1.5
-    ctx.fill(rightShellPath)
-    ctx.stroke(rightShellPath)
-
-    ctx.fillStyle = '#120307'
-    ctx.strokeStyle = '#ff1a1a'
-    ctx.lineWidth = 1.1
-    ctx.fill(rightGripPath)
-    ctx.stroke(rightGripPath)
-
-    ctx.fillStyle = '#19050b'
-    ctx.strokeStyle = '#ff1a1a'
-    ctx.lineWidth = 1.8
-    ctx.fill(rightTouchpadPath)
-    ctx.stroke(rightTouchpadPath)
-    ctx.strokeStyle = '#a9bcf0'
-    ctx.lineWidth = 3.5
-    ctx.beginPath()
-    ctx.moveTo(59, -62)
-    ctx.lineTo(47, -4)
-    ctx.stroke()
-
-    ctx.save()
-    ctx.translate(96, -14)
-    const btnOffsets = [
-      { x: 0, y: -17, c: '#a9bcf0' },
-      { x: 17, y: 0, c: '#ff1a1a' },
-      { x: 0, y: 17, c: '#a9bcf0' },
-      { x: -17, y: 0, c: '#ff4d4d' },
-    ]
-    for (let b = 0; b < 4; b++) {
-      const bo = btnOffsets[b]
-      ctx.fillStyle = '#140308'
-      ctx.strokeStyle = bo.c
-      ctx.lineWidth = 1.8
-      ctx.beginPath()
-      ctx.arc(bo.x, bo.y, 7.5, 0, Math.PI * 2)
-      ctx.fill()
-      ctx.stroke()
-    }
-    ctx.restore()
-
-    ctx.save()
-    ctx.translate(46, 20)
-    ctx.fillStyle = '#090104'
-    ctx.strokeStyle = '#a9bcf0'
-    ctx.lineWidth = 2.2
-    ctx.beginPath()
-    ctx.arc(0, 0, 19, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.stroke()
-    ctx.strokeStyle = '#ff1a1a'
-    ctx.lineWidth = 1
-    ctx.beginPath()
-    ctx.arc(0, 0, 12, 0, Math.PI * 2)
-    ctx.stroke()
-    ctx.restore()
-  }
+  ctx.strokeStyle = '#550005'
+  ctx.lineWidth = 8
+  ctx.stroke(shieldOuterPath)
 
   return c
 }
@@ -564,14 +505,14 @@ export function ReelSpine({
     const ctx = canvas.getContext('2d', { alpha: true })
     if (!ctx) return
 
-    // Pre-render all complex assemblies into GPU-backed offscreen sprites once!
-    const redGlow = createGlowSprite('rgba(255, 35, 35, 0.70)', 'rgba(229, 0, 0, 0.20)', 128)
+    // Pre-render volumetric glow sprites
+    const redGlow = createGlowSprite('rgba(255, 35, 35, 0.75)', 'rgba(229, 0, 0, 0.22)', 140)
     const iceGlow = createGlowSprite('rgba(195, 215, 255, 0.65)', 'rgba(169, 188, 240, 0.18)', 128)
     const greenGlow = createGlowSprite('rgba(74, 222, 128, 0.65)', 'rgba(34, 197, 94, 0.18)', 128)
     const goldGlow = createGlowSprite('rgba(255, 230, 128, 0.70)', 'rgba(212, 154, 26, 0.20)', 96)
 
-    const leftHalfSprite = bakeDualSenseHalf('left')
-    const rightHalfSprite = bakeDualSenseHalf('right')
+    // Pre-baked sprites (Stage 1 3D Shield, Stage 2 QR Portal, Stage 3 PS5 Tower)
+    const shieldExtrusionSprite = bakeShieldExtrusionSprite()
     const qrPortalScanSprite = bakeQRPortalSprite(false)
     const qrPortalApprovedSprite = bakeQRPortalSprite(true)
     const ps5TowerSprite = bakePS5TowerSprite()
@@ -593,13 +534,33 @@ export function ReelSpine({
     let dpr = 1
     let isMobile = window.innerWidth < 1024
 
+    // 3D Pointer & Gyro Tracking for authentic perspective tilt
+    let mouseX = 0
+    let mouseY = 0
+    let smoothMx = 0
+    let smoothMy = 0
+
+    const onPointerMove = (e: globalThis.PointerEvent) => {
+      const rect = canvas.getBoundingClientRect()
+      mouseX = clamp(((e.clientX - rect.left) / Math.max(1, rect.width)) * 2 - 1, -1, 1)
+      mouseY = clamp(((e.clientY - rect.top) / Math.max(1, rect.height)) * 2 - 1, -1, 1)
+    }
+
+    const onPointerLeave = () => {
+      mouseX = 0
+      mouseY = 0
+    }
+
+    window.addEventListener('pointermove', onPointerMove, { passive: true })
+    window.addEventListener('pointerleave', onPointerLeave, { passive: true })
+
     const resize = () => {
       const parent = canvas.parentElement
       if (!parent) return
       const rect = parent.getBoundingClientRect()
       isMobile = window.innerWidth < 1024
       dpr = Math.min(window.devicePixelRatio || 1, 1.35)
-      viewW = Math.max(1, Math.min(rect.width, 520))
+      viewW = Math.max(1, Math.min(rect.width, 540))
       viewH = Math.max(1, rect.height)
       canvas.width = Math.round(viewW * dpr)
       canvas.height = Math.round(viewH * dpr)
@@ -632,6 +593,15 @@ export function ReelSpine({
       scrollEnergy = clamp(scrollEnergy * Math.exp(-4.5 * dt) + instVel * 0.4, 0, 2.0)
       accumPhase += dt * (1 + scrollEnergy * 1.6)
 
+      // Smooth pointer spring interpolation for 3D tilt
+      smoothMx += (mouseX - smoothMx) * 0.08
+      smoothMy += (mouseY - smoothMy) * 0.08
+
+      const tiltY = smoothMx * 0.16 + Math.sin(t * 1.5) * 0.03
+      const tiltX = -smoothMy * 0.12 + Math.cos(t * 1.2) * 0.025
+      const parallaxX = smoothMx * 18
+      const parallaxY = smoothMy * 12
+
       const p = curP
 
       const logicalW = isMobile ? 510 : 540
@@ -657,23 +627,33 @@ export function ReelSpine({
       const visBot = targetWorldY + (viewH / scale) * 0.62
 
       // =====================================================================
-      // 1. STAGE 1 (y: 120..935): MASCOT SHIELD + 3D SPLITTING DUALSENSE
+      // 1. STAGE 1 (y: 120..935): 3D MASCOT SHIELD & ORBITAL EMBLEMS
+      //    (DualSense controller halves removed; 3D Emblem with full perspective)
       // =====================================================================
       if (visTop < 960) {
-        ctx.drawImage(redGlow, 300 - 220, 340 - 220, 440, 440)
+        // Red volumetric aura backdrop
+        ctx.drawImage(redGlow, 300 - 250, 330 - 250, 500, 500)
 
-        // Orbital Telemetry Rings around Stage 1 (solid strokes, zero setLineDash CPU overhead)
-        ctx.strokeStyle = 'rgba(255, 26, 26, 0.30)'
-        ctx.lineWidth = 1.5
+        // 3D Orbital Halo Rings around Stage 1 (from commit d7a8f3fe's HeroScene)
+        ctx.save()
+        ctx.translate(300 + parallaxX * 0.35, 330 + parallaxY * 0.35)
+        ctx.rotate(-0.16)
+        ctx.scale(1, 0.38)
+
+        ctx.rotate(t * 0.22)
+        ctx.strokeStyle = 'rgba(255, 26, 26, 0.45)'
+        ctx.lineWidth = 2.2
         ctx.beginPath()
-        ctx.arc(300, 340, 174, 0, Math.PI * 2)
+        ctx.arc(0, 0, 230, 0, Math.PI * 2)
         ctx.stroke()
 
-        ctx.strokeStyle = 'rgba(169, 188, 240, 0.24)'
-        ctx.lineWidth = 1.2
+        ctx.rotate(-t * 0.42)
+        ctx.strokeStyle = 'rgba(169, 188, 240, 0.42)'
+        ctx.lineWidth = 1.8
         ctx.beginPath()
-        ctx.arc(300, 340, 198, 0, Math.PI * 2)
+        ctx.arc(0, 0, 260, 0, Math.PI * 2)
         ctx.stroke()
+        ctx.restore()
 
         const scrollSplit = smoothstep(0.0, 0.35, p)
         const idleBreath = Math.sin(t * 1.85) * 0.5 + 0.5
@@ -693,9 +673,9 @@ export function ReelSpine({
           if (sy < visTop - 40 || sy > visBot + 40) continue
 
           const env = Math.sin(phase * Math.PI) * Math.pow(1 - phase, 0.6)
-          const lane = ((i % 5) - 2) * 38
-          const spiral = Math.sin(phase * Math.PI * 3 + t * 2.4 + i * 1.4) * 18
-          const sx = 300 + (lane + spiral) * env * (0.7 + splitAmt * 0.45)
+          const lane = ((i % 5) - 2) * 44
+          const spiral = Math.sin(phase * Math.PI * 3 + t * 2.4 + i * 1.4) * 20
+          const sx = 300 + (lane + spiral) * env * (0.8 + splitAmt * 0.4)
           const rot = accumPhase * (1.4 + (i % 4) * 0.45) + i * 0.8
           const baseSc = (0.76 + (i % 3) * 0.15) * (0.45 + Math.sin(phase * Math.PI) * 0.65)
           const op = Math.min(1, Math.sin(phase * Math.PI) * 1.75)
@@ -722,33 +702,65 @@ export function ReelSpine({
           ctx.restore()
         }
 
-        // RED ZONE MASCOT SHIELD EMBLEM (single GPU sprite blit)
-        const shieldFloatY = 308 + Math.sin(t * 2.2) * 5 - splitAmt * 8
-        const shieldScale = 0.96 + splitAmt * 0.08
+        // RED ZONE 3D MASCOT SHIELD EMBLEM (Substantial 3D scale & bevel depth)
+        const shieldFloatY = 325 + Math.sin(t * 2.2) * 6 - p * 30
+        const shieldScale = 0.98 + Math.sin(t * 1.8) * 0.02
+
         ctx.save()
-        ctx.translate(300, shieldFloatY)
-        ctx.scale(shieldScale, shieldScale)
-        ctx.drawImage(shieldSprite, -140, -145, 280, 320)
+        ctx.translate(300 + parallaxX, shieldFloatY + parallaxY)
+
+        // 3D Extrusion thickness slices (drawing 4 depth layers behind to create physical slab depth)
+        for (let d = 4; d >= 1; d--) {
+          const depthOffset = d * 3.2
+          const ox = -tiltY * depthOffset
+          const oy = -tiltX * depthOffset + d * 1.2
+          ctx.drawImage(shieldExtrusionSprite, -190 + ox, -220 + oy, 380, 440)
+        }
+
+        // Main 3D Shield Face with simulated perspective transform
+        ctx.save()
+        ctx.scale(shieldScale * (1 - Math.abs(tiltY) * 0.08), shieldScale * (1 - Math.abs(tiltX) * 0.06))
+        ctx.rotate(tiltY * 0.45)
+        ctx.transform(1, tiltY * 0.1, 0, 1, 0, 0)
+        ctx.drawImage(shieldSprite, -190, -220, 380, 440)
         ctx.restore()
 
-        // 3D DUALSENSE CONTROLLER HALVES (2 GPU sprite blits!)
-        const dx = 28 + splitAmt * 98
-        const dy = splitAmt * 12 + Math.sin(t * 2.2) * 4
-        const rotRad = ((6 + splitAmt * 21 + Math.cos(t * 1.8) * 1.4) * Math.PI) / 180
-        const perspX = 1 - splitAmt * 0.05
-
+        // 3D Floating Satellites from commit d7a8f3fe (orbiting around the shield in 3D foreground)
+        // 1. Red Neon Triangle (Top-Left)
         ctx.save()
-        ctx.translate(300 - dx, 365 + dy)
-        ctx.rotate(-rotRad)
-        ctx.scale(perspX, 1)
-        ctx.drawImage(leftHalfSprite, -180, -100, 200, 280)
+        const triX = -170 + tiltY * 34
+        const triY = -125 + tiltX * 28 + Math.sin(t * 2.0) * 12
+        ctx.translate(triX, triY)
+        ctx.rotate(Math.sin(t * 1.4) * 0.18 + tiltY * 0.4)
+        drawPSSymbol(ctx, 0, 22, '#ff1a1a', 4.0)
         ctx.restore()
 
+        // 2. Striped Holographic Circle (Mid-Right)
         ctx.save()
-        ctx.translate(300 + dx, 365 + dy)
-        ctx.rotate(rotRad)
-        ctx.scale(perspX, 1)
-        ctx.drawImage(rightHalfSprite, -20, -100, 200, 280)
+        const cirX = 180 + tiltY * 38
+        const cirY = -25 + tiltX * 30 + Math.cos(t * 1.8) * 10
+        ctx.translate(cirX, cirY)
+        drawStripedCircle(ctx, 24, -t * 0.3)
+        ctx.restore()
+
+        // 3. Ice-Blue 3D Spinning Square (Bottom-Left)
+        ctx.save()
+        const sqX = -155 + tiltY * 28
+        const sqY = 145 + tiltX * 24
+        ctx.translate(sqX, sqY)
+        ctx.scale(Math.cos(t * 1.3), 1) // 3D coin spin!
+        drawPSSymbol(ctx, 3, 20, '#bdc9e7', 3.5)
+        ctx.restore()
+
+        // 4. PlayStation Cross (Bottom-Right)
+        ctx.save()
+        const crossX = 165 + tiltY * 30
+        const crossY = 135 + tiltX * 26 + Math.sin(t * 1.6 + 1) * 8
+        ctx.translate(crossX, crossY)
+        ctx.rotate(Math.PI / 4 + Math.sin(t * 0.9) * 0.15)
+        drawPSSymbol(ctx, 2, 18, '#ff4d4d', 3.5)
+        ctx.restore()
+
         ctx.restore()
       }
 
@@ -972,12 +984,14 @@ export function ReelSpine({
     raf = requestAnimationFrame(render)
     return () => {
       cancelAnimationFrame(raf)
+      window.removeEventListener('pointermove', onPointerMove)
+      window.removeEventListener('pointerleave', onPointerLeave)
       window.removeEventListener('resize', resize)
     }
   }, [active, scrollRef])
 
   return (
-    <div className="pointer-events-none relative mx-auto flex h-full w-full max-w-[520px] items-center justify-center overflow-hidden">
+    <div className="pointer-events-none relative mx-auto flex h-full w-full max-w-[540px] items-center justify-center overflow-hidden">
       <canvas
         ref={canvasRef}
         className="block h-full w-full select-none"

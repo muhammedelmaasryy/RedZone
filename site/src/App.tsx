@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { I18nProvider } from './i18n'
 import { Navbar } from './components/layout/Navbar'
@@ -7,6 +7,7 @@ import { CartDrawer } from './components/layout/CartDrawer'
 import { AuthModal } from './components/layout/AuthModal'
 import { Floaters, Toasts } from './components/layout/Toasts'
 import { CursorGlow } from './components/fx/CursorGlow'
+import { Preloader } from './components/layout/Preloader'
 import Home from './pages/Home'
 
 const Catalog = lazy(() => import('./pages/Catalog'))
@@ -34,11 +35,11 @@ function ScrollManager() {
   return null
 }
 
-function AppRoutes() {
+function AppRoutes({ ready }: { ready: boolean }) {
   return (
     <main>
       <Routes>
-        <Route path="/" element={<Home ready={true} />} />
+        <Route path="/" element={<Home ready={ready} />} />
         <Route path="/games" element={<Suspense fallback={<div className="min-h-screen" />}><Catalog /></Suspense>} />
         <Route path="/plus" element={<Suspense fallback={<div className="min-h-screen" />}><Plus /></Suspense>} />
         <Route path="/game/:id" element={<Suspense fallback={<div className="min-h-screen" />}><Product /></Suspense>} />
@@ -51,13 +52,16 @@ function AppRoutes() {
 }
 
 export default function App() {
+  const [ready, setReady] = useState(false)
+
   return (
     <I18nProvider>
       <BrowserRouter>
         <ScrollManager />
+        {!ready && <Preloader onDone={() => setReady(true)} />}
         <CursorGlow />
         <Navbar />
-        <AppRoutes />
+        <AppRoutes ready={ready} />
         <Footer />
         <CartDrawer />
         <AuthModal />

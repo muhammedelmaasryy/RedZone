@@ -36,6 +36,7 @@ export function Preloader({ onDone }: { onDone: () => void }) {
 
     Promise.all([
       new Promise((r) => setTimeout(r, minTime)),
+      preloadImage('/brand/logo.webp'),
       preloadImage('/brand/mascot.webp'),
       preloadImage('/brand/favicon.png'),
       document.fonts?.ready ?? Promise.resolve(),
