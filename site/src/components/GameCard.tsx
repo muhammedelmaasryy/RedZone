@@ -1,4 +1,3 @@
-import { motion } from 'motion/react'
 import { Link } from 'react-router-dom'
 import { genreLabel, minPrice, type Game } from '../data/games'
 import { useI18n } from '../i18n'
@@ -14,10 +13,12 @@ function minBasePrice(game: Game) {
 export function GameCard({
   game,
   rank,
+  priority = false,
   className = '',
 }: {
   game: Game
   rank?: number
+  priority?: boolean
   className?: string
 }) {
   const { t, l, egp, num } = useI18n()
@@ -33,13 +34,9 @@ export function GameCard({
         className="group clip-angle relative flex h-full flex-col overflow-hidden border border-white/10 bg-night/80 transition-colors duration-300 hover:border-ice-300/70"
       >
         <div className="relative aspect-[2/3] overflow-hidden">
-          <motion.div
-            className="h-full w-full"
-            whileHover={{ scale: 1.07 }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <GameCover game={game} className="h-full w-full" />
-          </motion.div>
+          <div className="h-full w-full transition-transform duration-300 ease-out group-hover:scale-105">
+            <GameCover game={game} priority={priority} className="h-full w-full" />
+          </div>
 
           {/* Optional Top-5 Bestseller Rank Badge (#1 .. #5) */}
           {rank != null && (
@@ -116,12 +113,9 @@ export function GameCard({
                 {num(game.slotsLeft)} {t.card.slotsLeft}
               </div>
               <div className="mt-1 ms-auto h-1 w-10 overflow-hidden bg-white/10 sm:w-16">
-                <motion.div
-                  className={`h-full ${game.slotsLeft <= 3 ? 'bg-red-500' : 'bg-ice-400'}`}
-                  initial={{ width: 0 }}
-                  whileInView={{ width: `${fill * 100}%` }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.1, ease: 'easeOut' }}
+                <div
+                  className={`h-full origin-left rtl:origin-right ${game.slotsLeft <= 3 ? 'bg-red-500' : 'bg-ice-400'}`}
+                  style={{ transform: `scaleX(${fill})` }}
                 />
               </div>
             </div>

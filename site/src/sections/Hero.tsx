@@ -24,14 +24,6 @@ const FEATURED_IDS = ['fc27', 'gta6', 'spiderman2', 'bo7', 'yotei']
 const AUTO_PLAY_MS = 7000
 const STAGE_EASE = [0.22, 1, 0.36, 1] as const
 
-const line = {
-  hidden: { y: '110%' },
-  show: (i: number) => ({
-    y: '0%',
-    transition: { delay: 0.15 + i * 0.11, duration: 0.85, ease: [0.16, 1, 0.3, 1] as const },
-  }),
-}
-
 export function Hero({ ready }: { ready: boolean }) {
   const { t, lang, dir, egp, num } = useI18n()
   const containerRef = useRef<HTMLElement>(null)
@@ -260,8 +252,6 @@ export function Hero({ ready }: { ready: boolean }) {
   const cycleGame = () => {
     setFeaturedIdx((prev) => (prev + 1) % featuredList.length)
   }
-
-  const anim = ready ? 'show' : 'hidden'
 
   return (
     <section
@@ -524,12 +514,8 @@ export function Hero({ ready }: { ready: boolean }) {
 
                   <h1 className="font-display leading-[0.92] text-white" key={lang}>
                     {[t.hero.title1, t.hero.title2, t.hero.title3].map((w, i) => (
-                      <span key={i} className="block overflow-hidden pb-1">
-                        <motion.span
-                          custom={i}
-                          variants={line}
-                          initial="hidden"
-                          animate={anim}
+                      <span key={i} className="block pb-1">
+                        <span
                           className={`block ${
                             i === 0
                               ? 'text-6xl text-red-600 text-glow xl:text-[5.8rem]'
@@ -537,7 +523,7 @@ export function Hero({ ready }: { ready: boolean }) {
                           } ${i === 2 ? 'text-outline-ice' : ''}`}
                         >
                           {i === 0 ? <GlitchText text={w} active={ready} /> : w}
-                        </motion.span>
+                        </span>
                       </span>
                     ))}
                   </h1>

@@ -12,7 +12,6 @@ export function DeliveryFlow() {
   const { t, num } = useI18n()
   const [step, setStep] = useState(0)
   const totalSteps = t.how.steps.length
-  const barPercent = `${((step + 1) / totalSteps) * 100}%`
 
   const nextStep = () => setStep((prev) => (prev + 1) % totalSteps)
   const prevStep = () => setStep((prev) => (prev - 1 + totalSteps) % totalSteps)
@@ -33,10 +32,12 @@ export function DeliveryFlow() {
 
           <div className="relative flex gap-4 sm:gap-5">
             <div className="relative w-1 shrink-0 bg-white/10">
-              <motion.div
-                animate={{ height: barPercent }}
-                transition={{ duration: 0.35, ease: 'easeOut' }}
-                className="absolute inset-x-0 top-0 bg-red-500 glow"
+              <div
+                style={{ transform: `scaleY(${(step + 1) / totalSteps})` }}
+                className="
+                  absolute inset-0 origin-top bg-red-500 glow
+                  transition-transform duration-300 ease-out
+                "
               />
             </div>
 
@@ -139,14 +140,10 @@ export function DeliveryFlow() {
                     className="absolute inset-0 flex items-center justify-center gap-3"
                     exit={{ opacity: 0 }}
                   >
-                    {(['triangle', 'circle', 'cross', 'square'] as const).map((s, i) => (
-                      <motion.div
-                        key={s}
-                        animate={{ opacity: [0.2, 1, 0.2] }}
-                        transition={{ duration: 1.6, repeat: Infinity, delay: i * 0.2 }}
-                      >
+                    {(['triangle', 'circle', 'cross', 'square'] as const).map((s) => (
+                      <div key={s} className="opacity-75">
                         <PSShape shape={s} className="h-6 w-6 text-ice-300" />
-                      </motion.div>
+                      </div>
                     ))}
                   </motion.div>
                 )}

@@ -1,38 +1,49 @@
-import { motion, type Variants } from 'motion/react'
+import type { Variants } from 'motion/react'
 import type { ReactNode } from 'react'
 
 export const rise: Variants = {
-  hidden: { opacity: 0, y: 40 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } },
 }
 
-export const stagger: Variants = { hidden: {}, show: { transition: { staggerChildren: 0.08 } } }
+export const stagger: Variants = { hidden: {}, show: { transition: { staggerChildren: 0.05 } } }
 
-export function Reveal({ children, className = '', delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
-  return (
-    <motion.div className={className} variants={rise} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.25 }} transition={{ delay }}>
-      {children}
-    </motion.div>
-  )
+export function Reveal({
+  children,
+  className = '',
+}: {
+  children: ReactNode
+  className?: string
+  delay?: number
+}) {
+  return <div className={className}>{children}</div>
 }
 
-export function SectionHead({ kicker, title, sub, align = 'start' }: { kicker: string; title: string; sub?: string; align?: 'start' | 'center' }) {
+export function SectionHead({
+  kicker,
+  title,
+  sub,
+  align = 'start',
+}: {
+  kicker: string
+  title: string
+  sub?: string
+  align?: 'start' | 'center'
+}) {
   return (
-    <motion.div
-      variants={stagger}
-      initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, amount: 0.5 }}
-      className={`mb-6 flex flex-col gap-2 sm:mb-10 sm:gap-3 ${align === 'center' ? 'items-center text-center' : ''}`}
+    <div
+      className={`mb-6 flex flex-col gap-2 sm:mb-10 sm:gap-3 ${
+        align === 'center' ? 'items-center text-center' : ''
+      }`}
     >
-      <motion.div variants={rise} className="flex items-center gap-3 text-ice-300">
+      <div className="flex items-center gap-3 text-ice-300">
         <span className="h-px w-10 bg-gradient-to-r from-red-500 to-ice-300 rtl:bg-gradient-to-l" />
         <span className="font-condensed text-xl tracking-[0.2em] uppercase">{kicker}</span>
-      </motion.div>
-      <motion.h2 variants={rise} className="font-display text-3xl leading-tight text-white sm:text-5xl md:text-6xl">
+      </div>
+      <h2 className="font-display text-3xl leading-tight text-white sm:text-5xl md:text-6xl">
         {title}
-      </motion.h2>
-      {sub && <motion.p variants={rise} className="max-w-xl text-base text-ice-200/70">{sub}</motion.p>}
-    </motion.div>
+      </h2>
+      {sub && <p className="max-w-xl text-base text-ice-200/70">{sub}</p>}
+    </div>
   )
 }

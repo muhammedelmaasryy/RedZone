@@ -1,4 +1,3 @@
-import { motion, useMotionValue, useSpring } from 'motion/react'
 import { useCallback, useEffect, useRef, type PointerEvent } from 'react'
 import { games, type Game } from '../data/games'
 import { useI18n } from '../i18n'
@@ -13,6 +12,7 @@ function HorizontalGameRail({
   list,
   showRank = false,
   compact = false,
+  priorityFirst = false,
   headerAction,
   footerAction,
   className = '',
@@ -23,27 +23,29 @@ function HorizontalGameRail({
   list: Game[]
   showRank?: boolean
   compact?: boolean
+  priorityFirst?: boolean
   headerAction?: React.ReactNode
   footerAction?: React.ReactNode
   className?: string
 }) {
   const { t, dir } = useI18n()
   const rail = useRef<HTMLDivElement>(null)
+  const barRef = useRef<HTMLDivElement>(null)
   const drag = useRef({ active: false, moved: false, x: 0, left: 0 })
-  const progress = useMotionValue(0)
-  const bar = useSpring(progress, { stiffness: 200, damping: 30 })
 
   const update = useCallback(() => {
     const el = rail.current
-    if (!el) return
+    const barEl = barRef.current
+    if (!el || !barEl) return
     const max = el.scrollWidth - el.clientWidth
     const pos = Math.abs(el.scrollLeft)
-    progress.set(max > 0 ? pos / max : 1)
-  }, [progress])
+    const ratio = max > 0 ? Math.min(1, Math.max(0.08, pos / max)) : 1
+    barEl.style.transform = `scaleX(${ratio})`
+  }, [])
 
   useEffect(() => {
     update()
-    window.addEventListener('resize', update)
+    window.addEventListener('resize', update, { passive: true })
     return () => window.removeEventListener('resize', update)
   }, [update, dir])
 
@@ -66,7 +68,7 @@ function HorizontalGameRail({
   }
 
   return (
-    <section className={`relative overflow-hidden py-12 sm:py-18 ${className}`}>
+    <section className={`relative overflow-hidden py-10 sm:py-16 ${className}`}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <SectionHead kicker={kicker} title={title} sub={sub} />
@@ -74,12 +76,7 @@ function HorizontalGameRail({
         </div>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, x: dir === 'rtl' ? -50 : 50 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-      >
+      <div>
         <div
           ref={rail}
           onScroll={update}
@@ -101,6 +98,7 @@ function HorizontalGameRail({
               key={g.id}
               game={g}
               rank={showRank ? i + 1 : undefined}
+              priority={priorityFirst && i < 2}
               className={
                 compact
                   ? 'w-[132px] shrink-0 snap-start sm:w-[176px] lg:w-[196px]'
@@ -109,33 +107,38 @@ function HorizontalGameRail({
             />
           ))}
         </div>
-      </motion.div>
+      </div>
 
       <div className="mx-auto mt-3 flex max-w-7xl items-center gap-4 px-4 sm:px-6">
         <div className="relative h-0.5 flex-1 overflow-hidden bg-white/10">
-          <motion.div style={{ scaleX: bar }} className="absolute inset-0 origin-left bg-red-500 rtl:origin-right" />
+          <div
+            ref={barRef}
+            style={{ transform: 'scaleX(0.15)' }}
+            className="absolute inset-0 origin-left bg-red-500 transition-transform duration-150 ease-out rtl:origin-right"
+          />
         </div>
         <span className="flex items-center gap-2 text-xs tracking-[0.3em] text-white/40 uppercase">
-          <motion.span animate={{ x: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 1.6 }}>
-            ⟷
-          </motion.span>{' '}
+          <span>⟷</span>
           {t.best.drag}
         </span>
       </div>
 
-      {footerAction && <div className="mx-auto mt-8 flex max-w-7xl justify-center px-4 sm:px-6">{footerAction}</div>}
+      {footerAction && (
+        <div className="mx-auto mt-8 flex max-w-7xl justify-center px-4 sm:px-6">
+          {footerAction}
+        </div>
+      )}
     </section>
   )
 }
 
 /**
- * 1. CURRENT OFFERS & DISCOUNTS SECTION
- * Showcases all discounted games sorted by highest discount (-45% -> -15%)
+ * 1. Current Offers & Discounts (العروض والخصومات الحالية)
  */
 export function OffersSection() {
   const { t } = useI18n()
-  const offerGames = [...games]
-    .filter((g) => g.discount != null && g.discount > 0)
+  const list = games
+    .filter((g) => (g.discount ?? 0) > 0)
     .sort((a, b) => (b.discount ?? 0) - (a.discount ?? 0))
 
   return (
@@ -143,54 +146,56 @@ export function OffersSection() {
       kicker={t.offers.kicker}
       title={t.offers.title}
       sub={t.offers.sub}
-      list={offerGames}
-      className="border-t border-white/5 bg-gradient-to-b from-void via-blood/25 to-void"
+      list={list}
+      priorityFirst={true}
+      className="border-t border-white/5 bg-gradient-to-b from-void via-night/60 to-void"
     />
   )
 }
 
 /**
- * 2. NEW RELEASES & PRE-ORDERS SECTION
- * Highlights day-one and hot new releases (GTA VI, FC 27, Black Ops 7, Ghost of Yōtei, RE Requiem, NBA 2K27)
+ * 2. New Releases & Pre-Orders (أحدث الإصدارات والحجز المسبق)
  */
-const NEW_RELEASE_IDS = ['gta6', 'fc27', 'bo7', 'yotei', 're9', 'nba2k27']
-
 export function NewReleasesSection() {
   const { t } = useI18n()
-  const newReleaseGames = NEW_RELEASE_IDS.map((id) => games.find((g) => g.id === id)).filter(
-    (g): g is Game => g != null,
-  )
+  const ids = ['gta6', 'fc27', 'bo7', 'yotei', 're9', 'nba2k27']
+  const list = ids
+    .map((id) => games.find((g) => g.id === id))
+    .filter((g): g is Game => g != null)
 
   return (
     <HorizontalGameRail
       kicker={t.newReleases.kicker}
       title={t.newReleases.title}
       sub={t.newReleases.sub}
-      list={newReleaseGames}
+      list={list}
       className="border-t border-white/5"
     />
   )
 }
 
 /**
- * 3. BEST SELLERS (TOP 5) + BUTTON TO NAVIGATE TO ALL PRODUCTS
- * Compact cards (w-[132px] on mobile, w-[176px]–[196px] on desktop) ranked #1 to #5
+ * 3. Most Bought in Egypt — Top 5 + Navigate to All Products button
  */
 export function Bestsellers() {
   const { t } = useI18n()
-  const top5 = [...games].sort((a, b) => b.popularity - a.popularity).slice(0, 5)
+  const ids = ['fc27', 'gta6', 'spiderman2', 'bo7', 'yotei']
+  const list = ids
+    .map((id) => games.find((g) => g.id === id))
+    .filter((g): g is Game => g != null)
+    .slice(0, 5)
 
   return (
     <HorizontalGameRail
       kicker={t.best.kicker}
       title={t.best.title}
       sub={t.best.sub}
-      list={top5}
-      showRank
-      compact
-      className="border-t border-white/5 bg-gradient-to-b from-void via-night to-void"
+      list={list}
+      showRank={true}
+      compact={true}
+      className="border-t border-white/5 bg-gradient-to-b from-void via-blood/25 to-void"
       footerAction={
-        <MagneticButton to="/games" variant="ice">
+        <MagneticButton to="/games">
           {t.best.all} <span className="rtl:rotate-180">→</span>
         </MagneticButton>
       }
