@@ -128,17 +128,11 @@ export function Hero({ ready }: { ready: boolean }) {
         if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return
 
         const isHoriz = Math.abs(dx) >= Math.abs(dy)
-        const swipingDown = dy < 0 // finger moves up -> scrolling down
-        const swipingUp = dy > 0 // finger moves down -> scrolling up
 
-        // If the user touches directly on the Hero animation stage, OR swipes horizontally,
-        // OR scrolls vertically while not yet at the exit boundary, lock 100% inside the Hero!
-        if (
-          startedOnStageCanvas ||
-          isHoriz ||
-          (swipingDown && baseP < 0.98) ||
-          (swipingUp && baseP > 0.02 && window.scrollY <= 10)
-        ) {
+        // If the user drags horizontally anywhere in the Hero, OR drags in any direction
+        // directly on the 3D animation stage canvas, lock 100% inside the Hero!
+        // Vertical swipes on the bottom text dock scroll the page down under the Hero.
+        if (isHoriz || startedOnStageCanvas) {
           gestureMode = 'hero-scrub'
           setAutoPlay(false)
         } else {
@@ -276,7 +270,7 @@ export function Hero({ ready }: { ready: boolean }) {
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
-      className="noise relative h-[100svh] w-full overflow-hidden select-none"
+      className="relative h-[72svh] min-h-[470px] max-h-[580px] w-full overflow-hidden border-b border-white/10 select-none lg:h-[90svh] lg:min-h-[640px] lg:max-h-none lg:border-b-0"
     >
       {/* =====================================================================
           LAYER 0 (z-0): DYNAMIC STAGE-SYNCHRONIZED RADIAL BACKGROUNDS
@@ -316,30 +310,30 @@ export function Hero({ ready }: { ready: boolean }) {
         type="button"
         onClick={() => stepStage(-1, true)}
         aria-label="Previous stage"
-        className="pointer-events-auto absolute start-2.5 top-[34%] z-40 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-night/80 text-white shadow-[0_0_20px_rgba(0,0,0,0.7)] transition hover:border-red-500 hover:bg-red-600 active:scale-95 sm:start-5 sm:h-12 sm:w-12 lg:top-1/2"
+        className="pointer-events-auto absolute start-2.5 top-[29%] z-40 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-night/85 text-white shadow-[0_0_20px_rgba(0,0,0,0.7)] transition hover:border-red-500 hover:bg-red-600 active:scale-95 sm:start-5 sm:h-11 sm:w-11 lg:top-1/2 lg:h-12 lg:w-12"
       >
-        <span className="text-base sm:text-lg ltr:rotate-180">→</span>
+        <span className="text-sm sm:text-base lg:text-lg ltr:rotate-180">→</span>
       </button>
 
       <button
         type="button"
         onClick={() => stepStage(1, true)}
         aria-label="Next stage"
-        className="pointer-events-auto absolute end-2.5 top-[34%] z-40 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-night/80 text-white shadow-[0_0_20px_rgba(0,0,0,0.7)] transition hover:border-red-500 hover:bg-red-600 active:scale-95 sm:end-5 sm:h-12 sm:w-12 lg:top-1/2"
+        className="pointer-events-auto absolute end-2.5 top-[29%] z-40 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-night/85 text-white shadow-[0_0_20px_rgba(0,0,0,0.7)] transition hover:border-red-500 hover:bg-red-600 active:scale-95 sm:end-5 sm:h-11 sm:w-11 lg:top-1/2 lg:h-12 lg:w-12"
       >
-        <span className="text-base sm:text-lg rtl:rotate-180">→</span>
+        <span className="text-sm sm:text-base lg:text-lg rtl:rotate-180">→</span>
       </button>
 
       {/* =====================================================================
           LAYER 1 (z-10): 4K 60/120FPS CANVAS INTERACTIVE REEL SPINE
          ===================================================================== */}
       <div className="relative z-10 flex h-full w-full flex-col lg:block">
-        {/* TOP 64% ON MOBILE / FULL 100% ON DESKTOP: Unobstructed 3D Animation Stage
+        {/* TOP 42svh ON MOBILE / FULL 100% ON DESKTOP: Unobstructed 3D Animation Stage
             touch-none on the animation stage ensures scrolling your finger on the
             animation NEVER scrolls the page outside the Hero! */}
         <div
           ref={stageAreaRef}
-          className="pointer-events-auto relative h-[64svh] w-full shrink-0 touch-none pt-14 lg:h-full lg:pt-0"
+          className="pointer-events-auto relative h-[42svh] min-h-[260px] max-h-[330px] w-full shrink-0 touch-none pt-12 lg:h-full lg:min-h-0 lg:max-h-none lg:pt-0"
         >
           <ReelSpine
             scrollRef={scrollRef}
@@ -349,10 +343,10 @@ export function Hero({ ready }: { ready: boolean }) {
         </div>
 
         {/* ===================================================================
-            MOBILE BOTTOM DOCK (36svh, < 1024px)
-            Clean content dock without the 1, 2, 3 tab boxes or bottom buttons
+            MOBILE BOTTOM DOCK (Remaining ~30svh, < 1024px)
+            Compact content dock so the user can easily see and scroll to Offers below
            =================================================================== */}
-        <div className="pointer-events-auto relative z-30 flex h-[36svh] w-full flex-col justify-center border-t border-red-500/30 bg-gradient-to-b from-night/98 via-void to-void px-4 py-3 shadow-[0_-18px_45px_rgba(0,0,0,0.88)] sm:px-6 lg:hidden">
+        <div className="pointer-events-auto relative z-30 flex min-h-0 flex-1 w-full flex-col justify-center border-t border-red-500/30 bg-gradient-to-b from-night/98 via-void to-void px-4 py-2.5 shadow-[0_-14px_35px_rgba(0,0,0,0.85)] sm:px-6 lg:hidden">
           <div className="relative flex flex-1 flex-col justify-center overflow-hidden">
             <AnimatePresence mode="wait">
               {activeStage === 0 && (
@@ -362,20 +356,20 @@ export function Hero({ ready }: { ready: boolean }) {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -18 }}
                   transition={{ duration: 0.55, ease: STAGE_EASE }}
-                  className="flex flex-col gap-2"
+                  className="flex flex-col gap-1.5"
                 >
-                  <span className="font-condensed text-xs tracking-[0.18em] text-ice-300 uppercase">
+                  <span className="font-condensed text-[11px] tracking-[0.18em] text-ice-300 uppercase">
                     {t.hero.kicker}
                   </span>
-                  <h1 className="font-display text-2xl leading-[0.96] text-white sm:text-3xl" key={lang}>
+                  <h1 className="font-display text-xl leading-[0.98] text-white sm:text-2xl" key={lang}>
                     <span className="text-red-500 text-glow">{t.hero.title1} </span>
                     <span>{t.hero.title2} </span>
                     <span className="text-outline-ice">{t.hero.title3}</span>
                   </h1>
-                  <p className="line-clamp-2 text-xs leading-relaxed text-white/75 sm:text-sm">
+                  <p className="line-clamp-2 text-xs leading-snug text-white/75 sm:text-sm">
                     {t.hero.s1Desc}
                   </p>
-                  <div className="mt-1 flex flex-wrap items-center gap-2.5">
+                  <div className="mt-0.5 flex flex-wrap items-center gap-2">
                     <MagneticButton to="/games">
                       {t.hero.cta} <span className="rtl:rotate-180">→</span>
                     </MagneticButton>
@@ -393,19 +387,19 @@ export function Hero({ ready }: { ready: boolean }) {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -18 }}
                   transition={{ duration: 0.55, ease: STAGE_EASE }}
-                  className="flex flex-col gap-2"
+                  className="flex flex-col gap-1.5"
                 >
-                  <span className="font-condensed text-xs tracking-[0.18em] text-ice-300 uppercase">
+                  <span className="font-condensed text-[11px] tracking-[0.18em] text-ice-300 uppercase">
                     {t.hero.s2Kicker}
                   </span>
-                  <h2 className="font-display text-2xl leading-none text-white uppercase sm:text-3xl">
+                  <h2 className="font-display text-xl leading-none text-white uppercase sm:text-2xl">
                     <span>{t.hero.s2Title1} </span>
                     <span className="text-red-500 text-glow">{t.hero.s2Title2}</span>
                   </h2>
-                  <p className="line-clamp-2 text-xs leading-relaxed text-white/75 sm:text-sm">
+                  <p className="line-clamp-2 text-xs leading-snug text-white/75 sm:text-sm">
                     {t.hero.s2Desc}
                   </p>
-                  <div className="mt-1 flex items-center justify-between border-t border-white/10 pt-2">
+                  <div className="mt-0.5 flex items-center justify-between border-t border-white/10 pt-1.5">
                     <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-ice-300">
                       <Icon name="shield" className="h-3.5 w-3.5 text-red-500" />
                       {t.hero.s2Badge}

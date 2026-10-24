@@ -1,7 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react'
 import { lazy, Suspense, useEffect, useState } from 'react'
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
-import Lenis from 'lenis'
 import { I18nProvider } from './i18n'
 import { Navbar } from './components/layout/Navbar'
 import { Footer } from './components/layout/Footer'
@@ -18,25 +17,6 @@ const Product = lazy(() => import('./pages/Product'))
 const Checkout = lazy(() => import('./pages/Checkout'))
 const Order = lazy(() => import('./pages/Order'))
 
-let lenis: Lenis | null = null
-
-function useSmoothScroll() {
-  useEffect(() => {
-    if (
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
-      window.matchMedia('(pointer: coarse)').matches ||
-      window.innerWidth < 1024
-    ) {
-      return
-    }
-    lenis = new Lenis({ duration: 1.05, smoothWheel: true, syncTouch: false })
-    let raf = 0
-    const loop = (t: number) => { lenis?.raf(t); raf = requestAnimationFrame(loop) }
-    raf = requestAnimationFrame(loop)
-    return () => { cancelAnimationFrame(raf); lenis?.destroy(); lenis = null }
-  }, [])
-}
-
 function ScrollManager() {
   const { pathname, hash } = useLocation()
   useEffect(() => {
@@ -44,13 +24,11 @@ function ScrollManager() {
       if (hash) {
         const el = document.querySelector(hash) as HTMLElement | null
         if (el) {
-          if (lenis) lenis.scrollTo(el, { offset: -70 })
-          else el.scrollIntoView({ behavior: 'smooth' })
+          el.scrollIntoView({ behavior: 'smooth' })
           return
         }
       }
-      if (lenis) lenis.scrollTo(0, { immediate: true })
-      else window.scrollTo(0, 0)
+      window.scrollTo(0, 0)
     }
     const h = setTimeout(go, hash ? 450 : 0)
     return () => clearTimeout(h)
@@ -103,7 +81,6 @@ function AppRoutes({ ready }: { ready: boolean }) {
 
 export default function App() {
   const [ready, setReady] = useState(false)
-  useSmoothScroll()
   return (
     <I18nProvider>
       <BrowserRouter>

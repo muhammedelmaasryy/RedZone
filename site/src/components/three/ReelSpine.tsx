@@ -39,12 +39,12 @@ const QR_MODULES: Array<{ x: number; y: number; isIce: boolean }> = (() => {
   return mods
 })()
 
-// Pre-computed 3D ambient background particles for depth-of-field parallax
-const BG_PARTICLES = Array.from({ length: 28 }, (_, i) => ({
-  x: ((Math.sin(i * 73.1) * 0.5 + 0.5) - 0.5) * 560,
-  yOffset: (i / 28) * 2600,
-  z: 0.35 + (i % 5) * 0.16,
-  shape: i % 4, // 0: triangle, 1: circle, 2: cross, 3: square
+// Pre-computed 3D ambient background particles
+const BG_PARTICLES = Array.from({ length: 18 }, (_, i) => ({
+  x: ((Math.sin(i * 73.1) * 0.5 + 0.5) - 0.5) * 480,
+  yOffset: (i / 18) * 2600,
+  z: 0.4 + (i % 4) * 0.16,
+  shape: i % 4,
   speed: 14 + (i % 4) * 6,
   phase: i * 1.7,
 }))
@@ -90,7 +90,6 @@ function drawPSSymbol(
   ctx.lineCap = 'round'
   ctx.lineJoin = 'round'
   if (kind === 0) {
-    // Triangle
     ctx.beginPath()
     ctx.moveTo(0, -size)
     ctx.lineTo(size * 0.92, size * 0.7)
@@ -98,12 +97,10 @@ function drawPSSymbol(
     ctx.closePath()
     ctx.stroke()
   } else if (kind === 1) {
-    // Circle
     ctx.beginPath()
     ctx.arc(0, 0, size * 0.82, 0, Math.PI * 2)
     ctx.stroke()
   } else if (kind === 2) {
-    // Cross
     const s = size * 0.7
     ctx.beginPath()
     ctx.moveTo(-s, -s)
@@ -112,18 +109,69 @@ function drawPSSymbol(
     ctx.lineTo(-s, s)
     ctx.stroke()
   } else {
-    // Square
     const s = size * 0.72
     ctx.strokeRect(-s, -s, s * 2, s * 2)
   }
 }
 
 /**
- * 4K 60/120fps Hardware-Accelerated Canvas Cinema Engine
- * Zero DOM mutations per frame — renders all 3 stages, volumetric additive glow,
- * depth-sorted 3D double-helix conduits, and 3D hardware models directly on a
- * Retina-scaled HTML5 Canvas for video-grade smoothness on mobile & desktop.
+ * Pre-renders the entire Stage 1 Mascot Shield into an offscreen sprite once
+ * so `ctx.clip()` never runs during the 60-120fps animation loop.
  */
+function bakeShieldSprite(mascotImg?: HTMLImageElement): HTMLCanvasElement {
+  const w = 280
+  const h = 320
+  const dpr = 2
+  const c = document.createElement('canvas')
+  c.width = w * dpr
+  c.height = h * dpr
+  const ctx = c.getContext('2d')
+  if (!ctx) return c
+
+  ctx.scale(dpr, dpr)
+  ctx.translate(w / 2, 145)
+
+  const shieldOuterPath = new Path2D(
+    'M 0 -130 L 118 -86 L 118 22 C 118 92 66 138 0 160 C -66 138 -118 92 -118 22 L -118 -86 Z',
+  )
+  const shieldInnerPath = new Path2D(
+    'M 0 -118 L 106 -78 L 106 20 C 106 82 58 124 0 144 C -58 124 -106 82 -106 20 L -106 -78 Z',
+  )
+
+  ctx.fillStyle = '#240002'
+  ctx.fill(shieldOuterPath)
+
+  if (mascotImg && mascotImg.naturalWidth > 0 && mascotImg.naturalHeight > 0) {
+    ctx.save()
+    ctx.clip(shieldInnerPath)
+    const boxX = -130
+    const boxY = -125
+    const boxW = 260
+    const boxH = 285
+    const imgScale = Math.max(boxW / mascotImg.naturalWidth, boxH / mascotImg.naturalHeight)
+    const drawW = mascotImg.naturalWidth * imgScale
+    const drawH = mascotImg.naturalHeight * imgScale
+    const drawX = boxX + (boxW - drawW) / 2
+    const drawY = boxY
+    ctx.drawImage(mascotImg, drawX, drawY, drawW, drawH)
+    ctx.restore()
+  }
+
+  ctx.strokeStyle = 'rgba(255, 26, 26, 0.32)'
+  ctx.lineWidth = 12
+  ctx.stroke(shieldOuterPath)
+
+  ctx.strokeStyle = '#ff1a1a'
+  ctx.lineWidth = 5.5
+  ctx.stroke(shieldOuterPath)
+
+  ctx.strokeStyle = '#bdc9e7'
+  ctx.lineWidth = 3
+  ctx.stroke(shieldInnerPath)
+
+  return c
+}
+
 export function ReelSpine({
   scrollRef,
   active = true,
@@ -138,24 +186,24 @@ export function ReelSpine({
     if (!active) return
     const canvas = canvasRef.current
     if (!canvas) return
-    const ctx = canvas.getContext('2d', { alpha: true, desynchronized: true })
+    const ctx = canvas.getContext('2d', { alpha: true })
     if (!ctx) return
 
-    // Pre-render volumetric glow sprites once (zero runtime filter overhead!)
-    const redGlow = createGlowSprite('rgba(255, 35, 35, 0.72)', 'rgba(229, 0, 0, 0.22)', 160)
-    const iceGlow = createGlowSprite('rgba(195, 215, 255, 0.68)', 'rgba(169, 188, 240, 0.20)', 160)
-    const greenGlow = createGlowSprite('rgba(74, 222, 128, 0.68)', 'rgba(34, 197, 94, 0.20)', 160)
-    const goldGlow = createGlowSprite('rgba(255, 230, 128, 0.72)', 'rgba(212, 154, 26, 0.22)', 128)
+    // Pre-render volumetric glow sprites once
+    const redGlow = createGlowSprite('rgba(255, 35, 35, 0.70)', 'rgba(229, 0, 0, 0.20)', 128)
+    const iceGlow = createGlowSprite('rgba(195, 215, 255, 0.65)', 'rgba(169, 188, 240, 0.18)', 128)
+    const greenGlow = createGlowSprite('rgba(74, 222, 128, 0.65)', 'rgba(34, 197, 94, 0.18)', 128)
+    const goldGlow = createGlowSprite('rgba(255, 230, 128, 0.70)', 'rgba(212, 154, 26, 0.20)', 96)
 
-    // Preload mascot image for Stage 1 Shield
+    // Pre-bake shield sprite (updated once mascot image finishes loading)
+    let shieldSprite = bakeShieldSprite()
     const mascotImg = new Image()
     mascotImg.src = '/brand/mascot.webp'
-    let mascotLoaded = false
     mascotImg.onload = () => {
-      mascotLoaded = true
+      shieldSprite = bakeShieldSprite(mascotImg)
     }
 
-    // Pre-cache static DualSense Left & Right Half Path2D geometries
+    // Pre-cache static Path2D geometries & gradients (zero per-frame allocations!)
     const leftShellPath = new Path2D(
       'M 0 -68 L -82 -68 Q -138 -66 -152 -8 Q -170 58 -140 138 Q -126 170 -96 158 Q -72 146 -58 86 L -42 40 L 0 40 Z',
     )
@@ -174,13 +222,6 @@ export function ReelSpine({
     const rightBumperPath = new Path2D('M 114 -68 Q 74 -94 26 -76 L 20 -54 L 108 -44 Z')
     const rightTouchpadPath = new Path2D('M 0 -64 L 56 -64 L 44 -6 L 0 -6 Z')
 
-    const shieldOuterPath = new Path2D(
-      'M 0 -130 L 118 -86 L 118 22 C 118 92 66 138 0 160 C -66 138 -118 92 -118 22 L -118 -86 Z',
-    )
-    const shieldInnerPath = new Path2D(
-      'M 0 -118 L 106 -78 L 106 20 C 106 82 58 124 0 144 C -58 124 -106 82 -106 20 L -106 -78 Z',
-    )
-
     const ps5LeftWing = new Path2D(
       'M -70 -170 Q -48 -146 -44 -90 L -40 146 L -78 140 Q -90 10 -70 -170 Z',
     )
@@ -189,8 +230,28 @@ export function ReelSpine({
     )
     const ps5CenterCore = new Path2D('M -43 -154 Q 0 -138 43 -154 L 36 148 L -36 148 Z')
 
-    let viewW = 600
-    let viewH = 900
+    const shellGradL = ctx.createLinearGradient(-150, -70, 0, 160)
+    shellGradL.addColorStop(0, '#ffffff')
+    shellGradL.addColorStop(0.55, '#dce5f7')
+    shellGradL.addColorStop(1, '#8c9bb8')
+
+    const shellGradR = ctx.createLinearGradient(0, -70, 150, 160)
+    shellGradR.addColorStop(0, '#ffffff')
+    shellGradR.addColorStop(0.55, '#dce5f7')
+    shellGradR.addColorStop(1, '#8c9bb8')
+
+    const wingGrad = ctx.createLinearGradient(-80, -170, 80, 150)
+    wingGrad.addColorStop(0, '#ffffff')
+    wingGrad.addColorStop(0.6, '#dce5f7')
+    wingGrad.addColorStop(1, '#8c9bb8')
+
+    // Pre-allocated helix point buffers (zero GC pressure!)
+    const steps = 44
+    const redPts = Array.from({ length: steps + 1 }, () => ({ x: 0, y: 0, z: 0 }))
+    const icePts = Array.from({ length: steps + 1 }, () => ({ x: 0, y: 0, z: 0 }))
+
+    let viewW = 500
+    let viewH = 750
     let dpr = 1
     let isMobile = window.innerWidth < 1024
 
@@ -199,8 +260,9 @@ export function ReelSpine({
       if (!parent) return
       const rect = parent.getBoundingClientRect()
       isMobile = window.innerWidth < 1024
-      dpr = Math.min(window.devicePixelRatio || 1, 2.5)
-      viewW = Math.max(1, rect.width)
+      // Cap DPR at 1.5 so laptop & phone GPUs never waste fill-rate while staying razor-sharp
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5)
+      viewW = Math.max(1, Math.min(rect.width, 540))
       viewH = Math.max(1, rect.height)
       canvas.width = Math.round(viewW * dpr)
       canvas.height = Math.round(viewH * dpr)
@@ -209,7 +271,6 @@ export function ReelSpine({
     resize()
     window.addEventListener('resize', resize, { passive: true })
 
-    // Smooth S-curve spring camera state
     let curP = clamp(scrollRef.current, 0, 1)
     let velP = 0
     let scrollEnergy = 0
@@ -224,7 +285,7 @@ export function ReelSpine({
 
       const rawP = clamp(scrollRef.current, 0, 1)
 
-      // Critically-damped 2nd-order spring for 4K video-smooth stage transitions
+      // Critically-damped 2nd-order spring for silky stage transitions
       const omega = 3.85
       const accel = (rawP - curP) * (omega * omega) - 2 * omega * velP
       velP += accel * dt
@@ -236,41 +297,37 @@ export function ReelSpine({
 
       const p = curP
 
-      // Map world coordinates (600x900 virtual stage) into the canvas viewport
-      const logicalW = isMobile ? 520 : 600
-      const logicalH = isMobile ? 670 : 900
+      const logicalW = isMobile ? 510 : 540
+      const logicalH = isMobile ? 640 : 820
       const scale = Math.min(viewW / logicalW, viewH / logicalH)
 
-      // World Y centers for Stage 1 (350), Stage 2 (1345), Stage 3 (2290)
-      // Smoothly interpolate camera targetY across the 3 stages
       const targetWorldY =
         p <= 0.5
           ? 355 + (p / 0.5) * (1345 - 355)
           : 1345 + ((p - 0.5) / 0.5) * (2285 - 1345)
 
-      const horizSway = clamp(velP * -24, -18, 18)
+      const horizSway = clamp(velP * -22, -16, 16)
 
       ctx.save()
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       ctx.clearRect(0, 0, viewW, viewH)
 
-      // Center the 600-wide virtual spine at (viewW/2, viewH/2)
       ctx.translate(viewW / 2 + horizSway * scale, viewH / 2)
       ctx.scale(scale, scale)
       ctx.translate(-300, -targetWorldY)
 
-      const visTop = targetWorldY - (viewH / scale) * 0.65
-      const visBot = targetWorldY + (viewH / scale) * 0.65
+      const visTop = targetWorldY - (viewH / scale) * 0.62
+      const visBot = targetWorldY + (viewH / scale) * 0.62
 
       // =====================================================================
-      // 0. AMBIENT 3D PARALLAX PLAYSTATION SYMBOLS & VOLUMETRIC BOKEH
+      // 0. AMBIENT 3D PARALLAX PLAYSTATION SYMBOLS
       // =====================================================================
       for (let i = 0; i < BG_PARTICLES.length; i++) {
         const bp = BG_PARTICLES[i]
         const py = ((bp.yOffset - t * bp.speed) % 2600 + 2600) % 2600
-        if (py < visTop - 80 || py > visBot + 80) continue
-        const px = 300 + bp.x + Math.sin(t * 0.9 + bp.phase) * 18
-        const alpha = (0.12 + 0.14 * Math.sin(t * 1.5 + bp.phase)) * bp.z
+        if (py < visTop - 60 || py > visBot + 60) continue
+        const px = 300 + bp.x + Math.sin(t * 0.9 + bp.phase) * 16
+        const alpha = (0.12 + 0.12 * Math.sin(t * 1.5 + bp.phase)) * bp.z
         ctx.save()
         ctx.translate(px, py)
         ctx.rotate(t * 0.4 + bp.phase)
@@ -285,26 +342,11 @@ export function ReelSpine({
         ctx.restore()
       }
 
-      // Central Axis Telemetry Guide Line
-      ctx.save()
-      ctx.strokeStyle = 'rgba(169, 188, 240, 0.18)'
-      ctx.lineWidth = 1.2
-      ctx.setLineDash([4, 10])
-      ctx.beginPath()
-      ctx.moveTo(300, Math.max(100, visTop))
-      ctx.lineTo(300, Math.min(2550, visBot))
-      ctx.stroke()
-      ctx.restore()
-
       // =====================================================================
       // 1. STAGE 1 (y: 120..935): MASCOT SHIELD + 3D SPLITTING DUALSENSE
       // =====================================================================
       if (visTop < 960) {
-        // Core Volumetric Flare behind Shield & Controller
-        ctx.save()
-        ctx.globalCompositeOperation = 'lighter'
-        ctx.drawImage(redGlow, 300 - 240, 340 - 240, 480, 480)
-        ctx.restore()
+        ctx.drawImage(redGlow, 300 - 230, 340 - 230, 460, 460)
 
         // Rotating Orbital Telemetry Rings around Stage 1
         ctx.save()
@@ -326,7 +368,6 @@ export function ReelSpine({
         ctx.stroke()
         ctx.restore()
 
-        // Split physics for the DualSense Controller
         const scrollSplit = smoothstep(0.0, 0.35, p)
         const idleBreath = Math.sin(t * 1.85) * 0.5 + 0.5
         const splitAmt = clamp(
@@ -335,8 +376,8 @@ export function ReelSpine({
           1.15,
         )
 
-        // Cascading 3D-Tumbling Stream of PlayStation Symbols & Blu-Ray Discs (y: 410..935)
-        const shardCount = 16
+        // Cascading Stream of PlayStation Symbols & Blu-Ray Discs
+        const shardCount = 14
         for (let i = 0; i < shardCount; i++) {
           const speed = 0.26 + (i % 3) * 0.045
           const phase = (i / shardCount + accumPhase * speed + p * 1.1) % 1
@@ -361,10 +402,8 @@ export function ReelSpine({
 
           const kind = i % 5
           if (kind < 4) {
-            const col = kind % 2 === 0 ? '#ff1a1a' : '#a9bcf0'
-            drawPSSymbol(ctx, kind, 13, col, 3.2)
+            drawPSSymbol(ctx, kind, 13, kind % 2 === 0 ? '#ff1a1a' : '#a9bcf0', 3.2)
           } else {
-            // 3D Iridescent PlayStation Blu-Ray Disc
             ctx.fillStyle = '#a9bcf0'
             ctx.beginPath()
             ctx.arc(0, 0, 15, 0, Math.PI * 2)
@@ -395,7 +434,6 @@ export function ReelSpine({
           ctx.translate(300, 365)
           ctx.scale(arcScaleX, 1)
           ctx.globalAlpha = arcOp
-          ctx.globalCompositeOperation = 'lighter'
 
           ctx.strokeStyle = '#ff1a1a'
           ctx.lineWidth = 3.2
@@ -416,46 +454,13 @@ export function ReelSpine({
           ctx.restore()
         }
 
-        // RED ZONE MASCOT SHIELD EMBLEM (x=300, y=310)
+        // RED ZONE MASCOT SHIELD EMBLEM (single fast drawImage from pre-baked sprite!)
         const shieldFloatY = 308 + Math.sin(t * 2.2) * 5 - splitAmt * 8
         const shieldScale = 0.96 + splitAmt * 0.08
         ctx.save()
         ctx.translate(300, shieldFloatY)
         ctx.scale(shieldScale, shieldScale)
-
-        // Shield Backing
-        ctx.fillStyle = '#240002'
-        ctx.fill(shieldOuterPath)
-
-        // Clipped Mascot Artwork inside Shield (preserving exact natural aspect ratio — xMidYMin slice)
-        if (mascotLoaded && mascotImg.naturalWidth > 0 && mascotImg.naturalHeight > 0) {
-          ctx.save()
-          ctx.clip(shieldInnerPath)
-          const boxX = -130
-          const boxY = -125
-          const boxW = 260
-          const boxH = 285
-          const imgScale = Math.max(boxW / mascotImg.naturalWidth, boxH / mascotImg.naturalHeight)
-          const drawW = mascotImg.naturalWidth * imgScale
-          const drawH = mascotImg.naturalHeight * imgScale
-          const drawX = boxX + (boxW - drawW) / 2
-          const drawY = boxY
-          ctx.drawImage(mascotImg, drawX, drawY, drawW, drawH)
-          ctx.restore()
-        }
-
-        // Glowing Shield Borders
-        ctx.strokeStyle = 'rgba(255, 26, 26, 0.32)'
-        ctx.lineWidth = 12
-        ctx.stroke(shieldOuterPath)
-
-        ctx.strokeStyle = '#ff1a1a'
-        ctx.lineWidth = 5.5
-        ctx.stroke(shieldOuterPath)
-
-        ctx.strokeStyle = '#bdc9e7'
-        ctx.lineWidth = 3
-        ctx.stroke(shieldInnerPath)
+        ctx.drawImage(shieldSprite, -140, -145, 280, 320)
         ctx.restore()
 
         // 3D DUALSENSE CONTROLLER HALVES (LEFT & RIGHT)
@@ -470,39 +475,30 @@ export function ReelSpine({
         ctx.rotate(-rotRad)
         ctx.scale(perspX, 1)
 
-        // Exposed Internal Circuitry Core
         ctx.fillStyle = '#170409'
         ctx.strokeStyle = '#ff1a1a'
         ctx.lineWidth = 1.5
         ctx.fillRect(-18, -58, 18, 96)
         ctx.strokeRect(-18, -58, 18, 96)
 
-        // L1/L2 Bumper
         ctx.fillStyle = '#18050a'
         ctx.strokeStyle = '#a9bcf0'
         ctx.lineWidth = 1.8
         ctx.fill(leftBumperPath)
         ctx.stroke(leftBumperPath)
 
-        // White Sculpted Shell
-        const shellGradL = ctx.createLinearGradient(-150, -70, 0, 160)
-        shellGradL.addColorStop(0, '#ffffff')
-        shellGradL.addColorStop(0.55, '#dce5f7')
-        shellGradL.addColorStop(1, '#8c9bb8')
         ctx.fillStyle = shellGradL
         ctx.strokeStyle = '#ffffff'
         ctx.lineWidth = 1.5
         ctx.fill(leftShellPath)
         ctx.stroke(leftShellPath)
 
-        // Lower Obsidian Grip
         ctx.fillStyle = '#120307'
         ctx.strokeStyle = '#a9bcf0'
         ctx.lineWidth = 1.1
         ctx.fill(leftGripPath)
         ctx.stroke(leftGripPath)
 
-        // Left Touchpad Half + Red Lightbar Edge
         ctx.fillStyle = '#19050b'
         ctx.strokeStyle = '#a9bcf0'
         ctx.lineWidth = 1.8
@@ -515,7 +511,6 @@ export function ReelSpine({
         ctx.lineTo(-47, -4)
         ctx.stroke()
 
-        // D-Pad
         ctx.save()
         ctx.translate(-96, -14)
         ctx.fillStyle = '#180409'
@@ -529,7 +524,6 @@ export function ReelSpine({
         ctx.stroke()
         ctx.restore()
 
-        // Left Analog Stick
         ctx.save()
         ctx.translate(-46, 20)
         ctx.fillStyle = '#090104'
@@ -565,10 +559,6 @@ export function ReelSpine({
         ctx.fill(rightBumperPath)
         ctx.stroke(rightBumperPath)
 
-        const shellGradR = ctx.createLinearGradient(0, -70, 150, 160)
-        shellGradR.addColorStop(0, '#ffffff')
-        shellGradR.addColorStop(0.55, '#dce5f7')
-        shellGradR.addColorStop(1, '#8c9bb8')
         ctx.fillStyle = shellGradR
         ctx.strokeStyle = '#ffffff'
         ctx.lineWidth = 1.5
@@ -593,7 +583,6 @@ export function ReelSpine({
         ctx.lineTo(47, -4)
         ctx.stroke()
 
-        // Action Buttons (Triangle, Circle, Cross, Square)
         ctx.save()
         ctx.translate(96, -14)
         const btnOffsets = [
@@ -614,7 +603,6 @@ export function ReelSpine({
         }
         ctx.restore()
 
-        // Right Analog Stick
         ctx.save()
         ctx.translate(46, 20)
         ctx.fillStyle = '#090104'
@@ -678,17 +666,13 @@ export function ReelSpine({
 
         const approved = p > 0.72 || (p > 0.32 && Math.sin(t * 1.35) > 0.1)
 
-        // Volumetric Portal Glow
-        ctx.save()
-        ctx.globalCompositeOperation = 'lighter'
         ctx.drawImage(
           approved ? greenGlow : redGlow,
-          300 - 230,
-          portalFloatY - 230,
-          460,
-          460,
+          300 - 220,
+          portalFloatY - 220,
+          440,
+          440,
         )
-        ctx.restore()
 
         // Outer Rotating Portal Telemetry Rings
         ctx.save()
@@ -730,7 +714,6 @@ export function ReelSpine({
         ctx.fill()
         ctx.stroke()
 
-        // Portal Header Bar
         ctx.fillStyle = '#1a0409'
         ctx.strokeStyle = '#ff1a1a'
         ctx.lineWidth = 1.2
@@ -752,7 +735,6 @@ export function ReelSpine({
         ctx.textAlign = 'center'
         ctx.fillText('PSN QR SIGN-IN', 0, -129)
 
-        // QR Matrix Vault Box
         ctx.fillStyle = '#050002'
         ctx.strokeStyle = approved ? '#4ade80' : '#ff1a1a'
         ctx.lineWidth = 2
@@ -760,11 +742,9 @@ export function ReelSpine({
         ctx.fill()
         ctx.stroke()
 
-        // Sweeping Laser Scan Coordinate
         const scanNorm = Math.sin(accumPhase * 2.8) * 0.5 + 0.5
         const scanLocalY = -82 + scanNorm * 144
 
-        // QR Finder Patterns & Data Modules (centered at y = -10)
         ctx.save()
         ctx.translate(0, -10)
 
@@ -792,7 +772,6 @@ export function ReelSpine({
           ctx.fillRect(m.x - 3.6, m.y - 3.6, 7.2, 7.2)
         }
 
-        // Center Red Zone Triangle Emblem inside QR
         ctx.fillStyle = '#140307'
         ctx.strokeStyle = '#ff1a1a'
         ctx.lineWidth = 2
@@ -802,7 +781,6 @@ export function ReelSpine({
         drawPSSymbol(ctx, 0, 7, '#ffffff', 2)
         ctx.restore()
 
-        // Status Pill
         ctx.fillStyle = approved ? '#062414' : '#140206'
         ctx.strokeStyle = approved ? '#4ade80' : '#ff1a1a'
         ctx.lineWidth = 1.8
@@ -824,7 +802,6 @@ export function ReelSpine({
           125,
         )
 
-        // Bottom 3D Plasma Turbine Nozzle (y: +166..+220)
         ctx.fillStyle = '#1b060c'
         ctx.strokeStyle = '#a9bcf0'
         ctx.lineWidth = 1.5
@@ -837,7 +814,6 @@ export function ReelSpine({
         ctx.fill()
         ctx.stroke()
 
-        // Sweeping Laser Scan Line across QR Box
         ctx.strokeStyle = approved ? '#4ade80' : '#ff1a1a'
         ctx.lineWidth = 4
         ctx.beginPath()
@@ -852,17 +828,13 @@ export function ReelSpine({
         ctx.stroke()
         ctx.restore()
 
-        // 3D Smartphone Scanner & Volumetric Laser Beam Cone
+        // 3D Smartphone Scanner & Laser Beam Cone
         const px = 428 + Math.sin(t * 1.8) * 4
         const py = portalFloatY + 28 + Math.cos(t * 2.2) * 4
         const scanWorldY = portalFloatY + scanLocalY
 
         ctx.save()
-        ctx.globalCompositeOperation = 'lighter'
-        const coneGrad = ctx.createLinearGradient(px - 24, py - 24, 210, portalFloatY)
-        coneGrad.addColorStop(0, approved ? 'rgba(74, 222, 128, 0.5)' : 'rgba(255, 26, 26, 0.55)')
-        coneGrad.addColorStop(1, 'rgba(255, 26, 26, 0.02)')
-        ctx.fillStyle = coneGrad
+        ctx.fillStyle = approved ? 'rgba(74, 222, 128, 0.22)' : 'rgba(255, 26, 26, 0.25)'
         ctx.beginPath()
         ctx.moveTo(px - 22, py - 24)
         ctx.lineTo(212, Math.max(portalFloatY - 92, scanWorldY - 48))
@@ -871,7 +843,6 @@ export function ReelSpine({
         ctx.fill()
         ctx.restore()
 
-        // Smartphone Body
         ctx.save()
         ctx.translate(px, py)
         ctx.rotate((-12 * Math.PI) / 180)
@@ -912,29 +883,24 @@ export function ReelSpine({
         const endY = 2215
         const spanY = endY - startY
         const turns = 4.0 * Math.PI
-        const steps = 48
 
-        const getHelixPt = (u: number, offsetRad: number) => {
+        for (let i = 0; i <= steps; i++) {
+          const u = i / steps
           const y = startY + u * spanY
           const pinchTop = smoothstep(0.0, 0.14, u)
           const pinchBot = 1 - smoothstep(0.86, 1.0, u) * 0.72
           const env = Math.sin(u * Math.PI)
           const amp = 4 + (14 + env * 72) * pinchTop * pinchBot
-          const theta = u * turns - phaseShift + offsetRad
-          return {
-            x: 300 + Math.sin(theta) * amp,
-            y,
-            z: Math.cos(theta),
-          }
-        }
 
-        // Precompute points for this frame in a compact array (zero DOM string allocation!)
-        const redPts: Array<{ x: number; y: number; z: number }> = []
-        const icePts: Array<{ x: number; y: number; z: number }> = []
-        for (let i = 0; i <= steps; i++) {
-          const u = i / steps
-          redPts.push(getHelixPt(u, 0))
-          icePts.push(getHelixPt(u, Math.PI))
+          const thetaR = u * turns - phaseShift
+          redPts[i].x = 300 + Math.sin(thetaR) * amp
+          redPts[i].y = y
+          redPts[i].z = Math.cos(thetaR)
+
+          const thetaI = thetaR + Math.PI
+          icePts[i].x = 300 + Math.sin(thetaI) * amp
+          icePts[i].y = y
+          icePts[i].z = Math.cos(thetaI)
         }
 
         // 1. Back Layer of Crimson Strand
@@ -994,12 +960,8 @@ export function ReelSpine({
         ctx.stroke()
         ctx.restore()
 
-        // Arena Base Glow & Shockwaves (y = 2535)
-        ctx.save()
-        ctx.globalCompositeOperation = 'lighter'
-        ctx.drawImage(redGlow, 300 - 250, 2380 - 220, 500, 440)
-        ctx.drawImage(iceGlow, 300 - 210, 2535 - 120, 420, 240)
-        ctx.restore()
+        ctx.drawImage(redGlow, 300 - 230, 2380 - 200, 460, 400)
+        ctx.drawImage(iceGlow, 300 - 190, 2535 - 110, 380, 220)
 
         for (let i = 0; i < 3; i++) {
           const waveP = (accumPhase * 0.45 + i * 0.33) % 1
@@ -1019,10 +981,7 @@ export function ReelSpine({
 
         // Floating Gold/Platinum Trophy (x = 300, y = 2130)
         const ty = 2130 + Math.sin(t * 2.6) * 6
-        ctx.save()
-        ctx.globalCompositeOperation = 'lighter'
-        ctx.drawImage(goldGlow, 300 - 64, ty - 64, 128, 128)
-        ctx.restore()
+        ctx.drawImage(goldGlow, 300 - 56, ty - 56, 112, 112)
 
         ctx.save()
         ctx.translate(300, ty)
@@ -1049,7 +1008,6 @@ export function ReelSpine({
         ctx.save()
         ctx.translate(300, 2380)
 
-        // Base Pedestal
         ctx.fillStyle = '#120206'
         ctx.strokeStyle = '#ff1a1a'
         ctx.lineWidth = 2.4
@@ -1058,11 +1016,6 @@ export function ReelSpine({
         ctx.fill()
         ctx.stroke()
 
-        // Left & Right White Faceplates
-        const wingGrad = ctx.createLinearGradient(-80, -170, 80, 150)
-        wingGrad.addColorStop(0, '#ffffff')
-        wingGrad.addColorStop(0.6, '#dce5f7')
-        wingGrad.addColorStop(1, '#8c9bb8')
         ctx.fillStyle = wingGrad
         ctx.strokeStyle = '#ffffff'
         ctx.lineWidth = 1.5
@@ -1071,14 +1024,12 @@ export function ReelSpine({
         ctx.fill(ps5RightWing)
         ctx.stroke(ps5RightWing)
 
-        // Center Glossy Obsidian Core
         ctx.fillStyle = '#0d0205'
         ctx.strokeStyle = '#2a0c14'
         ctx.lineWidth = 1.5
         ctx.fill(ps5CenterCore)
         ctx.stroke(ps5CenterCore)
 
-        // Dual Breathing Neon LED Strips (Crimson Left, Ice-Blue Right)
         ctx.strokeStyle = '#ff1a1a'
         ctx.lineWidth = 4
         ctx.beginPath()
@@ -1093,7 +1044,6 @@ export function ReelSpine({
         ctx.lineTo(35, 140)
         ctx.stroke()
 
-        // Center Power Emblem
         ctx.fillStyle = '#160307'
         ctx.strokeStyle = '#a9bcf0'
         ctx.lineWidth = 2
@@ -1117,7 +1067,7 @@ export function ReelSpine({
   }, [active, scrollRef])
 
   return (
-    <div className="pointer-events-none relative flex h-full w-full items-center justify-center overflow-hidden">
+    <div className="pointer-events-none relative mx-auto flex h-full w-full max-w-[540px] items-center justify-center overflow-hidden">
       <canvas
         ref={canvasRef}
         className="block h-full w-full select-none"
